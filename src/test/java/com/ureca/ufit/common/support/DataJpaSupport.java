@@ -7,15 +7,15 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.repository.Repository;
 
-import com.dangsim.common.config.QueryDslConfig;
-import com.dangsim.common.config.TestJpaAuditingConfig;
+import com.ureca.ufit.common.config.TestJpaAuditingConfig;
+import com.ureca.ufit.global.config.QueryDslConfig;
 
 import jakarta.persistence.EntityManager;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Repository.class))
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import({TestJpaAuditingConfig.class, QueryDslConfig.class})
-public abstract class DataJpaSupport {
+public abstract class DataJpaSupport extends TestContainerSupport{
 
 	@Autowired
 	protected EntityManager em;

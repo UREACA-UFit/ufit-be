@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public abstract class ApiSupport {
+public abstract class ApiSupport extends TestContainerSupport {
 	@Autowired
 	protected MockMvc mockMvc;
 	@Autowired
