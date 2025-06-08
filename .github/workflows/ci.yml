@@ -1,0 +1,52 @@
+name: Develop CI
+
+on: 
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: JDK 17 시작
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: test 경로 application.yml 파일 생성
+        run: |
+          mkdir -p ./src/test/resources
+          echo "${{ secrets.APPLICATION_TEST }}" > ./src/test/resources/application.yml
+
+      - name: Gradle 캐시 적용
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      - name: Gradle 권한 부여
+        run: chmod +x ./gradlew
+
+      - name: Gradle 빌드 시작 (테스트 제외)
+        run: ./gradlew clean build -x test --no-daemon
+
+      - name: Gradle 테스트 시작
+        run: ./gradlew test --no-daemon
+
+      - name : 실패 알림
+        if: failure()
+        run: echo "❌ 테스트 실패! PR에서 확인해주세요."
+      
