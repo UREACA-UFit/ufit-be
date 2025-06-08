@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.config.EnableMongoAuditing;
 public class UfitApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(UfitApplication.class, args);
+		SpringApplication.run(UfitApplication.class, args); //커밋 테스트용 주석
 	}
 
 }
