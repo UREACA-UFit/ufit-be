@@ -49,4 +49,29 @@ jobs:
       - name : 실패 알림
         if: failure()
         run: echo "❌ 테스트 실패! PR에서 확인해주세요."
+
+      - name: PR 생성 Slack 알림
+        if: github.event_name == 'pull_request'
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data "{
+            \"text\": \"📣 PR 생성됨! \n👉 *${{ github.event.pull_request.title }}* \n🧑‍💻 작성자: ${{ github.actor }} \n🔗 링크: ${{ github.event.pull_request.html_url }}\"
+          }" ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: 빌드 성공 알림 (Slack)
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data "{
+            \"text\": \"✅ CI 성공! \n📦 브랜치: ${{ github.ref_name }} \n🔗 링크: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"
+          }" ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: 빌드 실패 알림 (Slack)
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data "{
+            \"text\": \"❌ CI 실패! \n📦 브랜치: ${{ github.ref_name }} \n🧑‍💻 커밋자: ${{ github.actor }} \n🔗 로그 확인: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"
+          }" ${{ secrets.SLACK_WEBHOOK_URL }}
+
       
