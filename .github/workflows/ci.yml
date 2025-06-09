@@ -116,21 +116,15 @@ jobs:
                 "type": "header",
                 "text": {
                   "type": "plain_text",
-                  "text": "✅ CI 빌드 성공!"
+                  "text": "✅ PR 빌드 성공!"
                 }
               },
               {
                 "type": "section",
-                "fields": [
-                  {
-                    "type": "mrkdwn",
-                    "text": "*브랜치:*\n${{ github.ref_name }}"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "*작성자:*\n${{ github.actor }}"
-                  }
-                ]
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*브랜치:* `${{ github.ref_name }}`\n*작성자:* `${{ github.actor }}`\n*PR 제목:* `${{ github.event.pull_request.title }} `"
+                }
               },
               {
                 "type": "actions",
@@ -158,21 +152,15 @@ jobs:
                 "type": "header",
                 "text": {
                   "type": "plain_text",
-                  "text": "❌ CI 빌드 실패"
+                  "text": "❌ PR 빌드 실패"
                 }
               },
               {
                 "type": "section",
-                "fields": [
-                  {
-                    "type": "mrkdwn",
-                    "text": "*브랜치:*\n${{ github.ref_name }}"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "*작성자:*\n${{ github.actor }}"
-                  }
-                ]
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*브랜치:* `${{ github.ref_name }}`\n*작성자:* `${{ github.actor }}`\n*PR 제목:* `${{ github.event.pull_request.title }} `"
+                }
               },
               {
                 "type": "actions",
