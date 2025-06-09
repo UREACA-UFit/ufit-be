@@ -8,6 +8,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import com.ureca.ufit.global.domain.MongoTimeBaseEntity;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Document(collection = "rate_plans")
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-public class RatePlan {
+public class RatePlan extends MongoTimeBaseEntity {
 
 	@Id
 	@Field("rate_plan_id")
