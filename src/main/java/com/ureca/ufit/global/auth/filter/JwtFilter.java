@@ -63,7 +63,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String bearerToken = request.getHeader(AUTH_HEADER);
         if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
 
-            String accessToken = bearerToken.substring(7);
+            String accessToken = bearerToken.substring(BEARER_PREFIX.length());
 
             // 어세스 토큰 검증, 블랙 리스트 확인
             JwtUtil.validateAccessToken(accessToken, secretKey);

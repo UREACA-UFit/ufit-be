@@ -11,6 +11,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Date;
+import java.util.UUID;
 import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -24,27 +25,26 @@ public class JwtUtil {
     public static final String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
     public static final String REFRESH_TOKEN_PREFIX = "refreshToken:";
     public static final String BLACKLIST_PREFIX = "blackList:";
-    public static final int ACCESS_TOKEN_EXPIRED_MS = 1;//1000 * 60 * 30; // 30분
+    public static final int ACCESS_TOKEN_EXPIRED_MS = 1000 * 60 * 30; // 30분
     public static final int REFRESH_TOKEN_EXPIRED_MS = 1000 * 60 * 60 * 24 * 3; // 3일
 
-    public static String createAccessToken(String email, SecretKey secretKey) {
+    public static String createToken(String email, String type, SecretKey secretKey, long expiresIn) {
         return Jwts.builder()
                 .claim("email", email)
-                .claim("type", "access")
+                .claim("type", type)
+                .claim("jit", UUID.randomUUID().toString())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRED_MS))
+                .expiration(new Date(System.currentTimeMillis() + expiresIn))
                 .signWith(secretKey)
                 .compact();
     }
 
+    public static String createAccessToken(String email, SecretKey secretKey) {
+        return createToken(email, "access", secretKey, ACCESS_TOKEN_EXPIRED_MS);
+    }
+
     public static String createRefreshToken(String email, SecretKey secretKey) {
-        return Jwts.builder()
-                .claim("email", email)
-                .claim("type", "refresh")
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRED_MS))
-                .signWith(secretKey)
-                .compact();
+        return createToken(email, "refresh", secretKey, REFRESH_TOKEN_EXPIRED_MS);
     }
 
     public static String getEmail(String token, SecretKey secretKey) {
@@ -107,6 +107,8 @@ public class JwtUtil {
             // 만료되지 않았다면 재발급 대상이 아님 → 예외 발생
             parseClaims(token, secretKey);
             throw new RestApiException(CommonErrorCode.REFRESH_DENIED);
+        } catch (RestApiException e){
+            throw e;
         } catch (ExpiredJwtException e) {
             return e.getClaims().get("email", String.class);
         } catch (SecurityException | MalformedJwtException e) {

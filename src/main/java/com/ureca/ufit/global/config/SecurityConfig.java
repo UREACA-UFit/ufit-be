@@ -1,9 +1,10 @@
 package com.ureca.ufit.global.config;
 
+import com.ureca.ufit.global.auth.filter.ExceptionHandlerFilter;
 import com.ureca.ufit.global.auth.filter.JwtFilter;
 import com.ureca.ufit.global.auth.filter.LoginFilter;
+import com.ureca.ufit.global.auth.handler.CustomLoginSuccessHandler;
 import com.ureca.ufit.global.auth.handler.CustomLogoutHandler;
-import com.ureca.ufit.global.auth.handler.LoginSuccessHandler;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -30,13 +32,15 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
 	private static final String[] AUTH_LIST = {
-			"/api/auth/login",
+			// 인증이 필요한 API 패턴
+			"/api/users/jwt/test"
 	};
 
 	private final JwtFilter jwtFilter;
-	private final LoginSuccessHandler loginSuccessHandler;
+	private final CustomLoginSuccessHandler loginSuccessHandler;
 	private final AuthenticationConfiguration authenticationConfiguration;
 	private final CustomLogoutHandler customLogoutHandler;
+	private final ExceptionHandlerFilter exceptionHandlerFilter;
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -58,24 +62,23 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http
-			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-			// 클라이언트가 리프레시 토큰을 재발급 요청 때만 쿠키에서 사용하므로 csrf는 토큰 재발급 요청 때만 사용
-			//.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-			.csrf(AbstractHttpConfigurer::disable) // swagger로 api 요청 확인 때만 사용
-			.formLogin(AbstractHttpConfigurer::disable)
-			.httpBasic(AbstractHttpConfigurer::disable)
-			.sessionManagement(
-				(session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-			);
 
 		http
-				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-				.addFilterBefore(loginFilter(), JwtFilter.class)
-			.authorizeHttpRequests(auth -> auth
-				.requestMatchers(AUTH_LIST).authenticated()
-				.anyRequest().permitAll()
-			);
+				.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+				.csrf(AbstractHttpConfigurer::disable)
+				.formLogin(AbstractHttpConfigurer::disable)
+				.httpBasic(AbstractHttpConfigurer::disable)
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+		http
+				.addFilterBefore(exceptionHandlerFilter, UsernamePasswordAuthenticationFilter.class) // ← 예외 핸들러
+				.addFilterBefore(loginFilter(), UsernamePasswordAuthenticationFilter.class) // ← 로그인 필터
+				.addFilterBefore(jwtFilter, BasicAuthenticationFilter.class); // ← JWT 필터
+
+		http
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers(AUTH_LIST).authenticated()
+						.anyRequest().permitAll());
 
 		http
 			.logout(logoutConfig -> logoutConfig

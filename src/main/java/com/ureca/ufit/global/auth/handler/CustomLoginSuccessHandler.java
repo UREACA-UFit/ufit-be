@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class LoginSuccessHandler implements AuthenticationSuccessHandler {
+public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final SecretKey secretKeyKey;
     private final RefreshTokenRepository refreshTokenRepository;
