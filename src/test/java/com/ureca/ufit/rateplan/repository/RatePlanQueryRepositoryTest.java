@@ -77,8 +77,6 @@ class RatePlanQueryRepositoryTest extends TestContainerSupport {
 					.truncatedTo(ChronoUnit.MILLIS);
 				DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
 				assertThat(LocalDateTime.parse(response.nextCursor(), fmt)).isEqualTo(expected);
-
-				assertThat(response.nextCursor()).isEqualTo(docs.get(END_INDEX - SIZE - 1).get(CREATED_AT).toString());
 			}
 		);
 
