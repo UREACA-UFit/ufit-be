@@ -2,6 +2,7 @@ package com.ureca.ufit.global.auth.service;
 
 import static com.ureca.ufit.global.auth.util.JwtUtil.AUTH_HEADER;
 import static com.ureca.ufit.global.auth.util.JwtUtil.BEARER_PREFIX;
+import static com.ureca.ufit.global.auth.util.JwtUtil.BLACKLIST_PREFIX;
 import static com.ureca.ufit.global.auth.util.JwtUtil.REFRESH_TOKEN_EXPIRED_MS;
 
 import com.ureca.ufit.entity.RefreshToken;
@@ -12,6 +13,7 @@ import com.ureca.ufit.global.exception.RestApiException;
 import jakarta.servlet.http.HttpServletResponse;
 import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 
@@ -21,13 +23,17 @@ public class AuthService {
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final SecretKey secretKey;
+    private final RedisTemplate<String, String> redisTemplate;
 
     public void reissueToken(String bearerToken, String refreshToken, HttpServletResponse response) {
+
         // 어세스 토큰 추출
-        if( bearerToken == null || !bearerToken.startsWith(BEARER_PREFIX)){
-            throw new RestApiException(CommonErrorCode.NOT_EXIST_BEARER_SUFFIX);
+        String accessToken = bearerToken.substring(BEARER_PREFIX.length());
+
+        // 블랙 리스트에 어세스 토큰이 있는 지 확인
+        if(redisTemplate.hasKey(BLACKLIST_PREFIX + accessToken)){
+            throw new RestApiException(CommonErrorCode.INVALID_TOKEN);
         }
-        String accessToken = bearerToken.substring(7);
 
         // 리프레시 토큰이 레디스에 있는지 확인
         RefreshToken refreshTokenEntity = refreshTokenRepository.findById(refreshToken).orElseThrow(()->
