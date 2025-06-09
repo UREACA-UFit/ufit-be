@@ -1,0 +1,147 @@
+package com.ureca.ufit.global.auth.util;
+
+import com.ureca.ufit.global.exception.CommonErrorCode;
+import com.ureca.ufit.global.exception.RestApiException;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.util.Date;
+import javax.crypto.SecretKey;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+@Component
+@RequiredArgsConstructor
+public class JwtUtil {
+
+    public static final String AUTH_HEADER = "Authorization";
+    public static final String BEARER_PREFIX = "Bearer ";
+    public static final String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
+    public static final String REFRESH_TOKEN_PREFIX = "refreshToken:";
+    public static final String BLACKLIST_PREFIX = "blackList:";
+    public static final int ACCESS_TOKEN_EXPIRED_MS = 1;//1000 * 60 * 30; // 30분
+    public static final int REFRESH_TOKEN_EXPIRED_MS = 1000 * 60 * 60 * 24 * 3; // 3일
+
+    public static String createAccessToken(String email, SecretKey secretKey) {
+        return Jwts.builder()
+                .claim("email", email)
+                .claim("type", "access")
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRED_MS))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    public static String createRefreshToken(String email, SecretKey secretKey) {
+        return Jwts.builder()
+                .claim("email", email)
+                .claim("type", "refresh")
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRED_MS))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    public static String getEmail(String token, SecretKey secretKey) {
+        return parseClaims(token, secretKey).get("email", String.class);
+    }
+
+    private static String getType(String token, SecretKey secretKey) {
+        return parseClaims(token, secretKey).get("type", String.class);
+    }
+
+    public static Date getExpiration(String token, SecretKey secretKey) {
+        return parseClaims(token, secretKey).getExpiration();
+    }
+
+    private static Claims parseClaims(String token, SecretKey secretKey) {
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+    // 기존 메서드 대체
+    public static void validateAccessToken(String token, SecretKey secretKey) {
+        validateToken(token, secretKey, "access", CommonErrorCode.EXPIRED_TOKEN);
+    }
+
+    public static void validateRefreshToken(String token, SecretKey secretKey) {
+        validateToken(token, secretKey, "refresh", CommonErrorCode.REFRESH_DENIED);
+    }
+
+    private static void validateToken(String token, SecretKey secretKey, String expectedType,
+            CommonErrorCode expiredErrorCode) {
+        try {
+            Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token);
+
+            String type = getType(token, secretKey);
+            if (!expectedType.equals(type)) {
+                throw new RestApiException(CommonErrorCode.INVALID_TOKEN);
+            }
+        } catch (SecurityException | MalformedJwtException e) {
+            throw new RestApiException(CommonErrorCode.INVALID_TOKEN);
+        } catch (ExpiredJwtException e) {
+            throw new RestApiException(expiredErrorCode);
+        } catch (UnsupportedJwtException e) {
+            throw new RestApiException(CommonErrorCode.UNSUPPORTED_TOKEN);
+        } catch (IllegalArgumentException e) {
+            throw new RestApiException(CommonErrorCode.ILLEGAL_TOKEN);
+        } catch (Exception e) {
+            throw new RestApiException(CommonErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // 토큰 검증 및 만료된 토큰에서 사용자의 이메일을 추출(주의: 토큰 재발급 로직에서만 사용할 것!)
+    public static String getEmailOnlyIfExpired(String token, SecretKey secretKey) {
+        try {
+            // 만료되지 않았다면 재발급 대상이 아님 → 예외 발생
+            parseClaims(token, secretKey);
+            throw new RestApiException(CommonErrorCode.REFRESH_DENIED);
+        } catch (ExpiredJwtException e) {
+            return e.getClaims().get("email", String.class);
+        } catch (SecurityException | MalformedJwtException e) {
+            throw new RestApiException(CommonErrorCode.INVALID_TOKEN);
+        } catch (UnsupportedJwtException e) {
+            throw new RestApiException(CommonErrorCode.UNSUPPORTED_TOKEN);
+        } catch (IllegalArgumentException e) {
+            throw new RestApiException(CommonErrorCode.ILLEGAL_TOKEN);
+        } catch (Exception e) {
+            throw new RestApiException(CommonErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    public static void setRefreshTokenCookie(HttpServletResponse response, String refreshToken,
+            int timeout) {
+        Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(timeout); // 쿠키 즉시 만료
+        response.addCookie(cookie);
+    }
+
+    public static String getRefreshTokenCookies(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null)
+            return null;
+
+        for (Cookie cookie : cookies) {
+            if (REFRESH_TOKEN_COOKIE_NAME.equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+        return null;
+    }
+
+}
