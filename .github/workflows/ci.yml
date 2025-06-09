@@ -1,0 +1,181 @@
+name: Develop CI
+
+on: 
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+
+      - name: PR 생성 알림
+        if: github.event_name == 'pull_request'
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "📣 새 PR이 생성되었습니다!"
+                }
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "*제목:*\n${{ github.event.pull_request.title }}"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*작성자:*\n${{ github.actor }}"
+                  }
+                ]
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "*브랜치:*\n${{ github.head_ref }}"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*커밋 메시지:*\n${{ github.event.pull_request.body || '내용 없음' }}"
+                  }
+                ]
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "🔗 PR 보러가기"
+                    },
+                    "url": "${{ github.event.pull_request.html_url }}"
+                  }
+                ]
+              }
+            ]
+          }' ${{ secrets.SLACK_WEBHOOK_PR }}
+
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: JDK 17 시작
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: test 경로 application.yml 파일 생성
+        run: |
+          mkdir -p ./src/test/resources
+          echo "${{ secrets.APPLICATION_TEST }}" > ./src/test/resources/application.yml
+
+      - name: Gradle 캐시 적용
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      - name: Gradle 권한 부여
+        run: chmod +x ./gradlew
+
+      - name: Gradle 빌드 시작 (테스트 제외)
+        run: ./gradlew clean build -x test --no-daemon
+
+      - name: Gradle 테스트 시작
+        run: ./gradlew test --no-daemon
+
+      - name : 실패 알림
+        if: failure()
+        run: echo "❌ 테스트 실패! PR에서 확인해주세요."
+
+      - name: 빌드 성공 알림 (Slack)
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "✅ PR 빌드 성공!"
+                }
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*브랜치:* `${{ github.ref_name }}`\n*작성자:* `${{ github.actor }}`\n*PR 제목:* `${{ github.event.pull_request.title }} `"
+                }
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "▶ 실행 로그 보기"
+                    },
+                    "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                ]
+              }
+            ]
+          }' ${{ secrets.SLACK_WEBHOOK_PR }}
+
+      - name: 빌드 실패 알림 (Slack)
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "❌ PR 빌드 실패"
+                }
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*브랜치:* `${{ github.ref_name }}`\n*작성자:* `${{ github.actor }}`\n*PR 제목:* `${{ github.event.pull_request.title }} `"
+                }
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "❗ 에러 로그 보기"
+                    },
+                    "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                ]
+              }
+            ]
+          }' ${{ secrets.SLACK_WEBHOOK_PR }}
+
+      
