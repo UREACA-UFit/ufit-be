@@ -3,7 +3,6 @@ package com.ureca.ufit.rateplan.repository;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,10 +72,11 @@ class RatePlanQueryRepositoryTest extends TestContainerSupport {
 			() -> assertThat(response.item().get(0).planName()).isEqualTo(PLAN + END_INDEX),
 			() -> assertThat(response.hasNext()).isTrue(),
 			() -> {
-				LocalDateTime expected = ((LocalDateTime)docs.get(END_INDEX - SIZE - 1).get(CREATED_AT))
-					.truncatedTo(ChronoUnit.MILLIS);
-				DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
-				assertThat(LocalDateTime.parse(response.nextCursor(), fmt)).isEqualTo(expected);
+				LocalDateTime docLocal = (LocalDateTime)docs.get(END_INDEX - SIZE - 1).get(CREATED_AT);
+				String expectedCursor = docLocal
+					.truncatedTo(ChronoUnit.MILLIS)
+					.toString();
+				assertThat(response.nextCursor()).isEqualTo(expectedCursor);
 			}
 		);
 
