@@ -13,6 +13,62 @@ jobs:
       pull-requests: write
 
     steps:
+
+      - name: PR 생성 알림
+        if: github.event_name == 'pull_request'
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "📣 새 PR이 생성되었습니다!"
+                }
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "*제목:*\n${{ github.event.pull_request.title }}"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*작성자:*\n${{ github.actor }}"
+                  }
+                ]
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "*브랜치:*\n${{ github.head_ref }}"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*커밋 메시지:*\n${{ github.event.pull_request.body || '내용 없음' }}"
+                  }
+                ]
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "🔗 PR 보러가기"
+                    },
+                    "url": "${{ github.event.pull_request.html_url }}"
+                  }
+                ]
+              }
+            ]
+          }' ${{ secrets.SLACK_WEBHOOK_PR }}
+
       - name: 코드 체크아웃
         uses: actions/checkout@v4
 
@@ -50,28 +106,88 @@ jobs:
         if: failure()
         run: echo "❌ 테스트 실패! PR에서 확인해주세요."
 
-      - name: PR 생성 Slack 알림
-        if: github.event_name == 'pull_request'
-        run: |
-          curl -X POST -H 'Content-type: application/json' \
-          --data "{
-            \"text\": \"📣 PR 생성됨! \n👉 *${{ github.event.pull_request.title }}* \n🧑‍💻 작성자: ${{ github.actor }} \n🔗 링크: ${{ github.event.pull_request.html_url }}\"
-          }" ${{ secrets.SLACK_WEBHOOK_URL }}
-
       - name: 빌드 성공 알림 (Slack)
         if: success()
         run: |
           curl -X POST -H 'Content-type: application/json' \
-          --data "{
-            \"text\": \"✅ CI 성공! \n📦 브랜치: ${{ github.ref_name }} \n🔗 링크: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"
-          }" ${{ secrets.SLACK_WEBHOOK_URL }}
+          --data '{
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "✅ CI 빌드 성공!"
+                }
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "*브랜치:*\n${{ github.ref_name }}"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*작성자:*\n${{ github.actor }}"
+                  }
+                ]
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "▶ 실행 로그 보기"
+                    },
+                    "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                ]
+              }
+            ]
+          }' ${{ secrets.SLACK_WEBHOOK_PR }}
 
       - name: 빌드 실패 알림 (Slack)
         if: failure()
         run: |
           curl -X POST -H 'Content-type: application/json' \
-          --data "{
-            \"text\": \"❌ CI 실패! \n📦 브랜치: ${{ github.ref_name }} \n🧑‍💻 커밋자: ${{ github.actor }} \n🔗 로그 확인: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"
-          }" ${{ secrets.SLACK_WEBHOOK_URL }}
+          --data '{
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "❌ CI 빌드 실패"
+                }
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "*브랜치:*\n${{ github.ref_name }}"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*작성자:*\n${{ github.actor }}"
+                  }
+                ]
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "❗ 에러 로그 보기"
+                    },
+                    "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                ]
+              }
+            ]
+          }' ${{ secrets.SLACK_WEBHOOK_PR }}
 
       
