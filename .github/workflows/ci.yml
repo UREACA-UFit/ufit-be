@@ -1,6 +1,6 @@
 name: Develop CI
 
-on: 
+on:
   pull_request:
     branches: [ "develop" ]
 
@@ -11,7 +11,8 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-
+    env:
+      TZ: 'Asia/Seoul'
     steps:
 
       - name: PR 생성 알림
@@ -102,7 +103,7 @@ jobs:
       - name: Gradle 테스트 시작
         run: ./gradlew test --no-daemon
 
-      - name : 실패 알림
+      - name: 실패 알림
         if: failure()
         run: echo "❌ 테스트 실패! PR에서 확인해주세요."
 
