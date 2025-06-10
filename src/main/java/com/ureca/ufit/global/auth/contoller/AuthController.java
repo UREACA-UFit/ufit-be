@@ -1,12 +1,9 @@
 package com.ureca.ufit.global.auth.contoller;
 
 import static com.ureca.ufit.global.auth.util.JwtUtil.AUTH_HEADER;
-import static com.ureca.ufit.global.auth.util.JwtUtil.BEARER_PREFIX;
 import static com.ureca.ufit.global.auth.util.JwtUtil.REFRESH_TOKEN_COOKIE_NAME;
 
 import com.ureca.ufit.global.auth.service.AuthService;
-import com.ureca.ufit.global.exception.CommonErrorCode;
-import com.ureca.ufit.global.exception.RestApiException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +21,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/reissue/token")
-    public ResponseEntity<?> reissueToken(
+    public ResponseEntity<Void> reissueToken(
             @CookieValue(name = REFRESH_TOKEN_COOKIE_NAME) String refreshToken,
             @RequestHeader(name = AUTH_HEADER) String bearerToken,
             HttpServletResponse response
