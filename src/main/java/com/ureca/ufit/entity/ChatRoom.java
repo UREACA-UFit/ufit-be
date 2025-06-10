@@ -23,7 +23,6 @@ public class ChatRoom {
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
-	@Column(name = "chat_room_id")
 	private Long id;
 
 	@OneToOne(fetch = LAZY, optional = false)

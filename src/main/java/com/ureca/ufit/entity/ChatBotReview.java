@@ -21,7 +21,6 @@ import lombok.NoArgsConstructor;
 public class ChatBotReview extends MongoTimeBaseEntity {
 
 	@Id
-	@Field("chat_bot_message_id")
 	private String id;
 
 	@NotNull
