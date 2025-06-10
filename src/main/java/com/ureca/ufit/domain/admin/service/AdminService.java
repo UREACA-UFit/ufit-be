@@ -6,7 +6,6 @@ import com.ureca.ufit.domain.admin.dto.response.AdminRatePlanResponse;
 import com.ureca.ufit.domain.admin.dto.response.CreateRatePlanResponse;
 import com.ureca.ufit.domain.admin.dto.response.DeleteRatePlanResponse;
 import com.ureca.ufit.domain.admin.exception.RatePlanErrorCode;
-import com.ureca.ufit.domain.rateplan.repository.RatePlanQueryRepository;
 import com.ureca.ufit.domain.rateplan.repository.RatePlanRepository;
 import com.ureca.ufit.entity.RatePlan;
 import com.ureca.ufit.global.dto.CursorPageResponse;
@@ -18,11 +17,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AdminService {
 
-	private final RatePlanQueryRepository ratePlanQueryRepository;
 	private final RatePlanRepository ratePlanRepository;
 
 	public CursorPageResponse<AdminRatePlanResponse> getRatePlansByCursor(String cursor, int size, String type) {
-		return ratePlanQueryRepository.getRatePlansByCursor(cursor, size, type);
+		return ratePlanRepository.getRatePlansByCursor(cursor, size, type);
 	}
 
 

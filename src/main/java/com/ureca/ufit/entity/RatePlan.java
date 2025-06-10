@@ -20,7 +20,6 @@ import static lombok.AccessLevel.PROTECTED;
 public class RatePlan extends MongoTimeBaseEntity {
 
 	@Id
-	@Field("rate_plan_id")
 	private String id;
 
 	@NotNull
