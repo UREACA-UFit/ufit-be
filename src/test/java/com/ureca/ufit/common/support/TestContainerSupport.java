@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 public abstract class TestContainerSupport {
 
-	private static final String POSTGRESQL_IMAGE = "postgresql:16";
+	private static final String POSTGRESQL_IMAGE = "postgres:16";
 	private static final String MONGO_IMAGE = "mongo:8.0.5";
 	private static final String REDIS_IMAGE = "redis:7.2.5";
 	private static final int POSTGRESQL_PORT = 5432;
