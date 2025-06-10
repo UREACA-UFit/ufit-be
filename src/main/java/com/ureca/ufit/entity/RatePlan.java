@@ -1,4 +1,4 @@
-package com.ureca.ufit.domain.ratePlan.entity;
+package com.ureca.ufit.entity;
 
 import static lombok.AccessLevel.*;
 
