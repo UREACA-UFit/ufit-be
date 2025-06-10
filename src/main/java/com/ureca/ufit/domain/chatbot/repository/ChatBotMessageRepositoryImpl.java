@@ -18,9 +18,7 @@ import com.ureca.ufit.entity.ChatRoom;
 import com.ureca.ufit.global.dto.CursorPageResponse;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 public class ChatBotMessageRepositoryImpl implements ChatBotMessageRepositoryCustom {
 
