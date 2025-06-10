@@ -18,7 +18,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 
 import com.ureca.ufit.common.support.TestContainerSupport;
 import com.ureca.ufit.domain.admin.dto.response.AdminRatePlanResponse;
-import com.ureca.ufit.domain.rateplan.repository.RatePlanQueryRepository;
+import com.ureca.ufit.domain.ratePlan.repository.RatePlanQueryRepository;
 import com.ureca.ufit.global.dto.CursorPageResponse;
 
 @SpringBootTest
