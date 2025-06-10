@@ -9,16 +9,16 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import com.ureca.ufit.domain.admin.dto.response.AdminRatePlanResponse;
 import com.ureca.ufit.global.dto.CursorPageResponse;
 
 import lombok.RequiredArgsConstructor;
 
-@Component
+@Repository
 @RequiredArgsConstructor
-public class RatePlanQueryRepository {
+public class RatePlanQueryRepositoryImpl implements RatePlanQueryRepository {
 
 	private static final String IS_DELETED = "is_deleted";
 	private static final String CURSOR = "_id";
