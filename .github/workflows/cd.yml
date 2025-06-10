@@ -151,10 +151,10 @@ jobs:
           port: 22
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_HUB_TOKEN }}
-            docker pull $IMAGE_NAME
+            docker pull ${{ secrets.DOCKER_USERNAME }}/ufit:latest
             docker stop ufit_server || true
             docker rm ufit_server || true
-            docker run -d --name ufit_server -p 8080:8080 $IMAGE_NAME
+            docker run -d --name ufit_server -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/ufit:latest
 
       - name: Slack Notify (Success)
         if: success()
