@@ -4,12 +4,15 @@ import static com.ureca.ufit.global.auth.util.JwtUtil.AUTH_HEADER;
 import static com.ureca.ufit.global.auth.util.JwtUtil.BEARER_PREFIX;
 import static com.ureca.ufit.global.auth.util.JwtUtil.REFRESH_TOKEN_EXPIRED_MS;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ureca.ufit.domain.user.dto.response.LoginResponse;
 import com.ureca.ufit.entity.RefreshToken;
 import com.ureca.ufit.global.auth.details.CustomUserDetails;
 import com.ureca.ufit.global.auth.repository.RefreshTokenRepository;
 import com.ureca.ufit.global.auth.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -22,10 +25,12 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final SecretKey secretKeyKey;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final ObjectMapper objectMapper;
+
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-            Authentication authentication) {
+            Authentication authentication) throws IOException {
 
         // 로그인 성공 시 인증 객체의 principal을 정의하기 위한 유저 정보
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -43,6 +48,10 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
         // 헤더에 어세스 토큰 저장
         response.setHeader(AUTH_HEADER, BEARER_PREFIX + accessToken);
+
+        // 바디에 Login Response 저장
+        LoginResponse loginResponse = LoginResponse.of(userDetails.getUsername(),userDetails.role());
+        objectMapper.writeValue(response.getWriter(), loginResponse);
     }
 
 }
