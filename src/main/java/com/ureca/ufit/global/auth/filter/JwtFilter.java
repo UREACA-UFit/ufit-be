@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -61,29 +62,35 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // 어세스 토큰 유효성 검사 시작
         String bearerToken = request.getHeader(AUTH_HEADER);
-        if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
 
-            String accessToken = bearerToken.substring(BEARER_PREFIX.length());
-
-            // 어세스 토큰 검증, 블랙 리스트 확인
-            JwtUtil.validateAccessToken(accessToken, secretKey);
-            if (Boolean.TRUE.equals(redisTemplate.hasKey(BLACKLIST_PREFIX + accessToken))) {
-                throw new RestApiException(CommonErrorCode.INVALID_TOKEN);
-            }
-
-            // 인증 객체를 설정하고 시큐리티 홀더에 저장
-            String email = JwtUtil.getEmail(accessToken, secretKey);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-            Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    userDetails, null, userDetails.getAuthorities()
-            );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        } else {
-            if (!isPublic) {
+        // 비회원일 때 검증 로직
+        if(Optional.ofNullable(bearerToken).isEmpty()){
+            if(!isPublic){
                 throw new RestApiException(CommonErrorCode.NOT_EXIST_BEARER_SUFFIX);
             }
+            filterChain.doFilter(request, response);
+            return;
         }
+
+        // 어세스 토큰 추출
+        String accessToken = Optional.of(bearerToken)
+                .filter(token -> token.startsWith(BEARER_PREFIX))
+                .map(token -> token.substring(BEARER_PREFIX.length()))
+                .orElseThrow(() -> new RestApiException(CommonErrorCode.NOT_EXIST_BEARER_SUFFIX));
+
+        // 어세스 토큰 검증, 블랙 리스트 확인
+        JwtUtil.validateAccessToken(accessToken, secretKey);
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(BLACKLIST_PREFIX + accessToken))) {
+            throw new RestApiException(CommonErrorCode.INVALID_TOKEN);
+        }
+
+        // 인증 객체를 설정하고 시큐리티 홀더에 저장
+        String email = JwtUtil.getEmail(accessToken, secretKey);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities()
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         filterChain.doFilter(request, response);
     }
