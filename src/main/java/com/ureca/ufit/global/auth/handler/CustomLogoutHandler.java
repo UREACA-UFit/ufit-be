@@ -39,7 +39,7 @@ public class CustomLogoutHandler implements LogoutHandler {
             if (bearerToken == null || !bearerToken.startsWith(BEARER_PREFIX)) {
                 throw new RestApiException(CommonErrorCode.NOT_EXIST_BEARER_SUFFIX);
             }
-            String accessToken = bearerToken.substring(7);
+            String accessToken = bearerToken.substring(BEARER_PREFIX.length());
             JwtUtil.validateAccessToken(accessToken, secretKey);
 
             // 블랙 리스트에 어세스 토큰 추가
@@ -54,7 +54,7 @@ public class CustomLogoutHandler implements LogoutHandler {
             }
 
             // 쿠키에서 리프레시 토큰 삭제 (timeout을 0으로 두어 즉시 삭제)
-            JwtUtil.setRefreshTokenCookie(response, null, 0);
+            JwtUtil.updateRefreshTokenCookie(response, null, 0);
         } catch (RestApiException e) {
             try {
                 SendErrorResponseUtil.sendErrorResponse(response, e.getErrorCode());

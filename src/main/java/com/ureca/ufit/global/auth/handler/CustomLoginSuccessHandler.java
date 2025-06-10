@@ -39,7 +39,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         refreshTokenRepository.save(refreshTokenEntity);
 
         // 쿠키에 리프레시 토큰 저장 (timeout 3일)
-        JwtUtil.setRefreshTokenCookie(response, refreshToken, REFRESH_TOKEN_EXPIRED_MS /1000);
+        JwtUtil.updateRefreshTokenCookie(response, refreshToken, REFRESH_TOKEN_EXPIRED_MS /1000);
 
         // 헤더에 어세스 토큰 저장
         response.setHeader(AUTH_HEADER, BEARER_PREFIX + accessToken);

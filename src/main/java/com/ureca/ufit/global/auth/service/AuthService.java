@@ -56,7 +56,7 @@ public class AuthService {
         RefreshToken newRefreshTokenEntity = RefreshToken.of(newRefreshToken, email);
         refreshTokenRepository.deleteById(refreshToken);
         refreshTokenRepository.save(newRefreshTokenEntity);
-        JwtUtil.setRefreshTokenCookie(response, newRefreshToken,REFRESH_TOKEN_EXPIRED_MS/1000);
+        JwtUtil.updateRefreshTokenCookie(response, newRefreshToken,REFRESH_TOKEN_EXPIRED_MS/1000);
 
         String newAccessToken = JwtUtil.createAccessToken(email, secretKey);
         response.setHeader(AUTH_HEADER, BEARER_PREFIX + newAccessToken);

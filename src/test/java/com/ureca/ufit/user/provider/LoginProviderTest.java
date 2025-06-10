@@ -13,15 +13,17 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class LoginProviderTest {
+
+    private final String EMAIL = "test@email.com";
+    private final String RAW_PASSWORD = "password123";
+    private final String ENCODED_PASSWORD = "encoded_password";
 
     @Mock
     PasswordEncoder passwordEncoder;
@@ -36,20 +38,18 @@ class LoginProviderTest {
     @Test
     void authenticateSuccess() {
         // given
-        String email = "test@email.com";
-        String rawPassword = "password123";
-        String encodedPassword = "encoded_password";
 
-        UserDetails userDetails = User.withUsername(email)
-                .password(encodedPassword)
+
+        UserDetails userDetails = User.withUsername(EMAIL)
+                .password(ENCODED_PASSWORD)
                 .roles("USER")
                 .build();
 
         UsernamePasswordAuthenticationToken token =
-                new UsernamePasswordAuthenticationToken(email, rawPassword);
+                new UsernamePasswordAuthenticationToken(EMAIL, RAW_PASSWORD);
 
-        when(userDetailsService.loadUserByUsername(email)).thenReturn(userDetails);
-        when(passwordEncoder.matches(rawPassword, encodedPassword)).thenReturn(true);
+        when(userDetailsService.loadUserByUsername(EMAIL)).thenReturn(userDetails);
+        when(passwordEncoder.matches(RAW_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
 
         // when
         Authentication result = loginProvider.authenticate(token);

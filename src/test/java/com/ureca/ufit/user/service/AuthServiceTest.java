@@ -65,7 +65,7 @@ class AuthServiceTest {
             mocked.when(() -> JwtUtil.validateRefreshToken(refreshToken, secretKey)).thenAnswer(inv -> null);
             mocked.when(() -> JwtUtil.createRefreshToken(email, secretKey)).thenReturn(newRefreshToken);
             mocked.when(() -> JwtUtil.createAccessToken(email, secretKey)).thenReturn(newAccessToken);
-            mocked.when(() -> JwtUtil.setRefreshTokenCookie(response, newRefreshToken, REFRESH_TOKEN_EXPIRED_MS / 1000)).thenCallRealMethod();
+            mocked.when(() -> JwtUtil.updateRefreshTokenCookie(response, newRefreshToken, REFRESH_TOKEN_EXPIRED_MS / 1000)).thenCallRealMethod();
 
             // when
             authService.reissueToken(bearerToken, refreshToken, response);
