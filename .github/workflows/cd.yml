@@ -103,6 +103,11 @@ jobs:
   build-and-deploy:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      TZ: 'Asia/Seoul'
 
     steps:
       - uses: actions/checkout@v4
