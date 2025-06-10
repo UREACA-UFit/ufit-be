@@ -3,7 +3,7 @@ package com.ureca.ufit.domain.admin.service;
 import org.springframework.stereotype.Service;
 
 import com.ureca.ufit.domain.admin.dto.response.AdminRatePlanResponse;
-import com.ureca.ufit.domain.rateplan.repository.RatePlanQueryRepository;
+import com.ureca.ufit.domain.ratePlan.repository.RatePlanQueryRepository;
 import com.ureca.ufit.global.dto.CursorPageResponse;
 
 import lombok.RequiredArgsConstructor;

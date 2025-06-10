@@ -1,4 +1,4 @@
-package com.ureca.ufit.domain.rateplan.repository;
+package com.ureca.ufit.domain.ratePlan.repository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
