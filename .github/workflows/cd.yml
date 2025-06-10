@@ -1,4 +1,4 @@
-name: FastAPI Prod CI/CD
+name: Backend Prod CI/CD
 
 on:
   pull_request:
@@ -17,6 +17,11 @@ jobs:
   test:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      TZ: 'Asia/Seoul'
 
     steps:
       - uses: actions/checkout@v4
