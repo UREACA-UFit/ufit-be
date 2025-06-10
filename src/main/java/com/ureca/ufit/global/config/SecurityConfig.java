@@ -1,5 +1,6 @@
 package com.ureca.ufit.global.config;
 
+import com.ureca.ufit.entity.enums.Role;
 import com.ureca.ufit.global.auth.filter.ExceptionHandlerFilter;
 import com.ureca.ufit.global.auth.filter.JwtFilter;
 import com.ureca.ufit.global.auth.filter.LoginFilter;
@@ -31,9 +32,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	private static final String[] AUTH_LIST = {
+	private static final String[] USER_AUTH_LIST = {
 			// 인증이 필요한 API 패턴
 			"/api/users/jwt/test"
+	};
+
+	private static final String[] ADMIN_AUTH_LIST = {
+			// 관리자 인증이 필요한 API 패턴
 	};
 
 	private final JwtFilter jwtFilter;
@@ -77,7 +82,8 @@ public class SecurityConfig {
 
 		http
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers(AUTH_LIST).authenticated()
+						.requestMatchers(USER_AUTH_LIST).authenticated()
+						.requestMatchers(ADMIN_AUTH_LIST).hasRole(Role.ADMIN.name())
 						.anyRequest().permitAll());
 
 		http
