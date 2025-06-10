@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class ChatBotMessageService {
 
 	private final ChatBotMessageRepository chatBotMessageRepository;
