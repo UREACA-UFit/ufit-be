@@ -7,7 +7,7 @@ public record ChatMessageDto(
 	String messageId,
 	String content,
 	Boolean owner,
-	Long aPlanId,
-	Long bPlanId
+	String aPlanId,
+	String bPlanId
 ) {
 }
