@@ -16,14 +16,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "chat_roomes")
+@Table(name = "chat_rooms")
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 public class ChatRoom {
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
-	@Column(name = "chat_room_id")
 	private Long id;
 
 	@OneToOne(fetch = LAZY, optional = false)
@@ -33,5 +32,11 @@ public class ChatRoom {
 	@Builder(access = PRIVATE)
 	private ChatRoom(User user) {
 		this.user = user;
+	}
+
+	public static ChatRoom of(User user){
+		return ChatRoom.builder()
+			.user(user)
+			.build();
 	}
 }
