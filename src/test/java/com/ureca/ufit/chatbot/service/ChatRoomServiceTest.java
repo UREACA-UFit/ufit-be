@@ -1,0 +1,78 @@
+package com.ureca.ufit.chatbot.service;
+
+import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static org.mockito.BDDMockito.*;
+
+import java.util.Optional;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.ureca.ufit.common.fixture.ChatRoomFixture;
+import com.ureca.ufit.common.fixture.UserFixture;
+import com.ureca.ufit.domain.chatbot.dto.response.ChatRoomCreateResponse;
+import com.ureca.ufit.domain.chatbot.repository.ChatRoomRepository;
+import com.ureca.ufit.domain.chatbot.service.ChatRoomService;
+import com.ureca.ufit.domain.user.repository.UserRepository;
+import com.ureca.ufit.entity.ChatRoom;
+import com.ureca.ufit.entity.User;
+
+@ExtendWith(MockitoExtension.class)
+public class ChatRoomServiceTest {
+
+	@Mock
+	private ChatRoomRepository chatRoomRepository;
+
+	@Mock
+	private UserRepository userRepository;
+
+	@InjectMocks
+	private ChatRoomService chatRoomService;
+
+	@Test
+	@DisplayName("기존 채팅방이 있을 때 기존 채팅방을 반환한다")
+	public void getExistingChatRoom() {
+		// given
+		String email = "test@email.com";
+		Long chatRoomId = 1L;
+
+		User user = UserFixture.user(email);
+		ChatRoom existingChatRoom = ChatRoomFixture.chatRoom(chatRoomId, user);
+
+		given(userRepository.getByEmail(email)).willReturn(user);
+		given(chatRoomRepository.findByUser(user)).willReturn(Optional.of(existingChatRoom));
+
+		// when
+		ChatRoomCreateResponse result = chatRoomService.getOrCreateChatRoom(email);
+
+		// then
+		assertThat(result.chatRoomId()).isEqualTo(chatRoomId);
+		then(chatRoomRepository).should(never()).save(any(ChatRoom.class));
+	}
+
+	@Test
+	@DisplayName("기존 채팅방이 없을 때 새로운 채팅방을 생성하여 반환한다")
+	public void getOrCreateChatRoom_NoChatRoom_CreatesAndReturnsNewChatRoom() {
+		// given
+		String email = "test@email.com";
+		Long chatRoomId = 2L;
+
+		User user = UserFixture.user(email);
+		ChatRoom newChatRoom = ChatRoomFixture.chatRoom(chatRoomId, user);
+
+		given(userRepository.getByEmail(email)).willReturn(user);
+		given(chatRoomRepository.findByUser(user)).willReturn(Optional.empty());
+		given(chatRoomRepository.save(any(ChatRoom.class))).willReturn(newChatRoom);
+
+		// when
+		ChatRoomCreateResponse result = chatRoomService.getOrCreateChatRoom(email);
+
+		// then
+		assertThat(result.chatRoomId()).isEqualTo(chatRoomId);
+		then(chatRoomRepository).should().save(any(ChatRoom.class));
+	}
+}
