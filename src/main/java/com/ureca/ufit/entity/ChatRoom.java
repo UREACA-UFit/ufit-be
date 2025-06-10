@@ -33,4 +33,10 @@ public class ChatRoom {
 	private ChatRoom(User user) {
 		this.user = user;
 	}
+
+	public static ChatRoom of(User user){
+		return ChatRoom.builder()
+			.user(user)
+			.build();
+	}
 }
