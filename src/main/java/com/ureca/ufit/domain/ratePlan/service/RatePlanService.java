@@ -18,23 +18,12 @@ public class RatePlanService {
     private final RatePlanRepository ratePlanRepository;
 
     /**
-     * 페이징 처리된 요금제 목록 조회
+     * 페이지네이션 + 정렬(type) 적용
      */
-    public Page<RatePlanListResponse> getRatePlanList(Pageable pageable) {
+    public Page<RatePlanListResponse> getRatePlanList(Pageable pageable, String sortType) {
         return ratePlanRepository
-                .findByEnabledTrueAndDeletedFalse(pageable)
+                .findEnabledRatePlansWithSort(pageable, sortType)
                 .map(RatePlanListResponse::from);
-    }
-
-    /**
-     * 필터링된 전체 요금제 목록 조회
-     */
-    public List<RatePlanListResponse> getRatePlanList() {
-        return ratePlanRepository.findAll().stream()
-                .filter(RatePlan::isEnabled)
-                .filter(plan -> !plan.isDeleted())
-                .map(RatePlanListResponse::from)
-                .toList();
     }
 
     /**
@@ -43,6 +32,9 @@ public class RatePlanService {
     public RatePlanDetailResponse getRatePlanDetail(String id) {
         RatePlan ratePlan = ratePlanRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 요금제가 존재하지 않습니다: " + id));
+        if (!ratePlan.isEnabled() || ratePlan.isDeleted()) {
+            throw new IllegalArgumentException("조회할 수 없는 요금제입니다: " + id);
+        }
         return RatePlanDetailResponse.from(ratePlan);
     }
 }

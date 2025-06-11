@@ -1,19 +1,14 @@
-package com.ureca.ufit.domain.ratePlan.repository;
+package com.ureca.ufit.domain.rateplan.repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.ureca.ufit.entity.RatePlan;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import com.ureca.ufit.domain.admin.dto.response.AdminRatePlanResponse;
@@ -31,14 +26,6 @@ public class RatePlanQueryRepositoryImpl implements RatePlanQueryRepository {
 	private static final String HIGHEST_PRICE = "highestPrice";
 	private static final String RATE_PLANS = "rate_plans";
 	private static final String MONTHLY_FEE = "monthly_fee";
-
-	// 정렬 타입 상수
-	private static final String IS_ENABLED = "is_enabled";
-	private static final String PRICE_ASC = "PRICE_ASC";
-	private static final String PRICE_DESC = "PRICE_DESC";
-	private static final String NAME_ASC = "NAME_ASC";
-	private static final String NAME_DESC = "NAME_DESC";
-	private static final String LATEST = "LATEST";
 
 	private final MongoTemplate mongoTemplate;
 
@@ -120,40 +107,5 @@ public class RatePlanQueryRepositoryImpl implements RatePlanQueryRepository {
 			return Sort.Order.desc(MONTHLY_FEE);
 		}
 		return Sort.Order.desc(CURSOR);
-	}
-
-	// ===== 사용자용 요금제 목록 조회 메서드 =====
-	@Override
-	public Page<RatePlan> findEnabledRatePlansWithSort(Pageable pageable, String sortType) {
-		// 1. 판매 중이고 삭제되지 않은 요금제만 필터링
-		Criteria criteria = Criteria.where("is_enabled").is(true)
-				.and("is_deleted").is(false);
-
-		// 2. sortType 문자열로 바로 분기
-		Sort sort;
-		if ("NAME_ASC".equalsIgnoreCase(sortType)) {
-			sort = Sort.by("planName").ascending();
-		} else if ("NAME_DESC".equalsIgnoreCase(sortType)) {
-			sort = Sort.by("planName").descending();
-		} else if ("PRICE_DESC".equalsIgnoreCase(sortType)) {
-			sort = Sort.by("monthlyFee").descending();
-		} else {
-			// 기본 또는 PRICE_ASC
-			sort = Sort.by("monthlyFee").ascending();
-		}
-
-		// 3. Aggregation 대신 간단한 Query + skip/limit 사용
-		Query query = new Query(criteria)
-				.with(sort)
-				.skip(pageable.getOffset())
-				.limit(pageable.getPageSize());
-
-		// 4. 전체 개수 조회
-		long total = mongoTemplate.count(new Query(criteria), RatePlan.class);
-
-		// 5. 페이징된 결과 조회
-		List<RatePlan> items = mongoTemplate.find(query, RatePlan.class);
-
-		return new PageImpl<>(items, pageable, total);
 	}
 }
