@@ -34,10 +34,9 @@ public class User extends TimeBaseEntity {
 
 	@Size(max = 50)
 	@NotNull
-	@Column(name = "email", nullable = false)
+	@Column(name = "email", nullable = false, unique = true)
 	private String email;
 
-	@Size(max = 50)
 	@NotNull
 	@Column(name = "password", nullable = false)
 	private String password;
