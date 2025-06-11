@@ -121,4 +121,26 @@ class RatePlanQueryRepositoryTest extends DataMongoSupport {
 			() -> assertThat(response.item().get(SIZE - 1).planName()).isEqualTo(plan4.getPlanName())
 		);
 	}
+
+	@DisplayName("요금제 목록이 비어있을 때 빈 목록이 조회된다.")
+	@Test
+	void getEmptyWhenRatePlanIsEmpty() {
+		// given
+		final int SIZE = 10;
+		final String TYPE = "highestPrice";
+
+		// when
+		CursorPageResponse<AdminRatePlanResponse> response = ratePlanQueryRepositoryImpl.getRatePlansByCursor(
+			null,
+			SIZE,
+			TYPE
+		);
+
+		// then
+		assertAll(
+			() -> assertThat(response.item().size()).isZero(),
+			() -> assertThat(response.hasNext()).isFalse(),
+			() -> assertThat(response.nextCursor()).isNull()
+		);
+	}
 }
