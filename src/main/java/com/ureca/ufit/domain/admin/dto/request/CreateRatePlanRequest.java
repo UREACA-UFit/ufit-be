@@ -15,9 +15,9 @@ public record CreateRatePlanRequest(
         @JsonProperty("basic_benefit")
         Map<String, Object> basic_benefit,
         @JsonProperty("special_benefit")
-        String special_benefit,
+        Map<String, Object> special_benefit,
         @JsonProperty("discount_benefit")
-        String discount_benefit
+        Map<String, Object> discount_benefit
 ) {
 
 }
