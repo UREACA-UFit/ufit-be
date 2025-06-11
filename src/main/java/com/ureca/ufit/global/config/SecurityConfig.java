@@ -1,12 +1,5 @@
 package com.ureca.ufit.global.config;
 
-import com.ureca.ufit.entity.enums.Role;
-import com.ureca.ufit.global.auth.filter.ExceptionHandlerFilter;
-import com.ureca.ufit.global.auth.filter.JwtFilter;
-import com.ureca.ufit.global.auth.filter.LoginFilter;
-import com.ureca.ufit.global.auth.handler.CustomLoginSuccessHandler;
-import com.ureca.ufit.global.auth.handler.CustomLogoutHandler;
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,6 +19,14 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.ureca.ufit.entity.enums.Role;
+import com.ureca.ufit.global.auth.filter.ExceptionHandlerFilter;
+import com.ureca.ufit.global.auth.filter.JwtFilter;
+import com.ureca.ufit.global.auth.filter.LoginFilter;
+import com.ureca.ufit.global.auth.handler.CustomLoginSuccessHandler;
+import com.ureca.ufit.global.auth.handler.CustomLogoutHandler;
+
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -33,12 +34,12 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
 	private static final String[] USER_AUTH_LIST = {
-			// 인증이 필요한 API 패턴
-			"/api/users/jwt/test"
+		// 인증이 필요한 API 패턴
+		"/api/users/jwt/test"
 	};
 
 	private static final String[] ADMIN_AUTH_LIST = {
-			// 관리자 인증이 필요한 API 패턴
+		// 관리자 인증이 필요한 API 패턴
 	};
 
 	private final JwtFilter jwtFilter;
@@ -69,22 +70,22 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
 		http
-				.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-				.csrf(AbstractHttpConfigurer::disable)
-				.formLogin(AbstractHttpConfigurer::disable)
-				.httpBasic(AbstractHttpConfigurer::disable)
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+			.csrf(AbstractHttpConfigurer::disable)
+			.formLogin(AbstractHttpConfigurer::disable)
+			.httpBasic(AbstractHttpConfigurer::disable)
+			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		http
-				.addFilterBefore(exceptionHandlerFilter, UsernamePasswordAuthenticationFilter.class) // ← 예외 핸들러
-				.addFilterBefore(loginFilter(), UsernamePasswordAuthenticationFilter.class) // ← 로그인 필터
-				.addFilterBefore(jwtFilter, BasicAuthenticationFilter.class); // ← JWT 필터
+			.addFilterBefore(exceptionHandlerFilter, UsernamePasswordAuthenticationFilter.class) // ← 예외 핸들러
+			.addFilterBefore(loginFilter(), UsernamePasswordAuthenticationFilter.class) // ← 로그인 필터
+			.addFilterBefore(jwtFilter, BasicAuthenticationFilter.class); // ← JWT 필터
 
 		http
-				.authorizeHttpRequests(auth -> auth
-						.requestMatchers(USER_AUTH_LIST).authenticated()
-						.requestMatchers(ADMIN_AUTH_LIST).hasRole(Role.ADMIN.name())
-						.anyRequest().permitAll());
+			.authorizeHttpRequests(auth -> auth
+				.requestMatchers(USER_AUTH_LIST).authenticated()
+				.requestMatchers(ADMIN_AUTH_LIST).hasRole(Role.ADMIN.name())
+				.anyRequest().permitAll());
 
 		http
 			.logout(logoutConfig -> logoutConfig
@@ -93,7 +94,7 @@ public class SecurityConfig {
 				.logoutSuccessHandler((request, response, authentication) -> {
 					response.setStatus(HttpServletResponse.SC_OK);
 				})
-		);
+			);
 
 		return http.build();
 	}
