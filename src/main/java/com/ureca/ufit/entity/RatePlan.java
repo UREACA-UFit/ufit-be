@@ -1,19 +1,18 @@
 package com.ureca.ufit.entity;
 
-import static lombok.AccessLevel.*;
-
-import java.util.Map;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
-
 import com.ureca.ufit.global.domain.MongoTimeBaseEntity;
-
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.util.Map;
+
+import static lombok.AccessLevel.PRIVATE;
+import static lombok.AccessLevel.PROTECTED;
 
 @Document(collection = "rate_plans")
 @Getter
@@ -88,4 +87,65 @@ public class RatePlan extends MongoTimeBaseEntity {
 		this.isDeleted = isDeleted;
 	}
 
+	public static RatePlan of(String planName, String summary, int monthlyFee, int discountFee,
+		String dataAllowance, String voiceAllowance, String smsAllowance,
+		Map<String, Object> basicBenefit, boolean isEnabled, boolean isDeleted) {
+		return RatePlan.builder()
+			.planName(planName)
+			.summary(summary)
+			.monthlyFee(monthlyFee)
+			.discountFee(discountFee)
+			.dataAllowance(dataAllowance)
+			.voiceAllowance(voiceAllowance)
+			.smsAllowance(smsAllowance)
+			.basicBenefit(basicBenefit)
+			.isEnabled(isEnabled)
+			.isDeleted(isDeleted)
+			.build();
+	}
+
+	public static RatePlan of(String planName, String summary, int monthlyFee, int discountFee,
+							String dataAllowance, String voiceAllowance, String smsAllowance,
+							Map<String, Object> basicBenefit, Map<String, Object> specialBenefit, Map<String, Object> discountBenefit
+							) {
+
+		return RatePlan.builder()
+				.planName(planName)
+				.summary(summary)
+				.monthlyFee(monthlyFee)
+				.discountFee(discountFee)
+				.dataAllowance(dataAllowance)
+				.voiceAllowance(voiceAllowance)
+				.smsAllowance(smsAllowance)
+				.basicBenefit(basicBenefit) // not null
+				.specialBenefit(specialBenefit) // null 가능
+				.discountBenefit(discountBenefit) // null 가능..
+				.isEnabled(true)
+				.isDeleted(false)
+				.build();
+	}
+
+	public static RatePlan of(String planName, String summary, int monthlyFee, int discountFee,
+							  String dataAllowance, String voiceAllowance, String smsAllowance,
+							  Map<String, Object> basicBenefit
+	) {
+
+		return RatePlan.builder()
+				.planName(planName)
+				.summary(summary)
+				.monthlyFee(monthlyFee)
+				.discountFee(discountFee)
+				.dataAllowance(dataAllowance)
+				.voiceAllowance(voiceAllowance)
+				.smsAllowance(smsAllowance)
+				.basicBenefit(basicBenefit)
+				.isEnabled(true)
+				.isDeleted(false)
+				.build();
+	}
+
+	public void updateDeleteStatus() {
+		this.isDeleted = !isDeleted;
+	}
+  
 }
