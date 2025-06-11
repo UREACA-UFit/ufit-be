@@ -87,6 +87,22 @@ public class RatePlan extends MongoTimeBaseEntity {
 		this.isDeleted = isDeleted;
 	}
 
+	public static RatePlan of(String planName, String summary, int monthlyFee, int discountFee,
+		String dataAllowance, String voiceAllowance, String smsAllowance,
+		Map<String, Object> basicBenefit, boolean isEnabled, boolean isDeleted) {
+		return RatePlan.builder()
+			.planName(planName)
+			.summary(summary)
+			.monthlyFee(monthlyFee)
+			.discountFee(discountFee)
+			.dataAllowance(dataAllowance)
+			.voiceAllowance(voiceAllowance)
+			.smsAllowance(smsAllowance)
+			.basicBenefit(basicBenefit)
+			.isEnabled(isEnabled)
+			.isDeleted(isDeleted)
+			.build();
+	}
 
 	public static RatePlan of(String planName, String summary, int monthlyFee, int discountFee,
 							String dataAllowance, String voiceAllowance, String smsAllowance,
@@ -131,7 +147,5 @@ public class RatePlan extends MongoTimeBaseEntity {
 	public void updateDeleteStatus() {
 		this.isDeleted = !isDeleted;
 	}
-
-
-
+  
 }
