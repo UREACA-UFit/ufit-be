@@ -34,7 +34,7 @@ public class ChatRoomServiceTest {
 	private ChatRoomService chatRoomService;
 
 	@Test
-	@DisplayName("기존 채팅방이 있을 때 기존 채팅방을 반환한다")
+	@DisplayName("회원에 대해 기존 채팅방이 있을 때 기존 채팅방을 반환한다")
 	public void getExistingChatRoom() {
 		// given
 		String email = "test@email.com";
@@ -51,11 +51,12 @@ public class ChatRoomServiceTest {
 
 		// then
 		assertThat(result.chatRoomId()).isEqualTo(chatRoomId);
+		assertThat(result.isAnonymous()).isFalse();
 		then(chatRoomRepository).should(never()).save(any(ChatRoom.class));
 	}
 
 	@Test
-	@DisplayName("기존 채팅방이 없을 때 새로운 채팅방을 생성하여 반환한다")
+	@DisplayName("회원에 대해 기존 채팅방이 없을 때 새로운 채팅방을 생성하여 반환한다")
 	public void getOrCreateChatRoom_NoChatRoom_CreatesAndReturnsNewChatRoom() {
 		// given
 		String email = "test@email.com";
@@ -73,6 +74,26 @@ public class ChatRoomServiceTest {
 
 		// then
 		assertThat(result.chatRoomId()).isEqualTo(chatRoomId);
+		assertThat(result.isAnonymous()).isFalse();
+		then(chatRoomRepository).should().save(any(ChatRoom.class));
+	}
+
+	@Test
+	@DisplayName("비회원 사용자인 경우 새 채팅방을 생성하고 isAnonymous가 true인 응답을 반환한다")
+	public void getOrCreateChatRoom_AnonymousUser() {
+		// given
+		String email = "anonymousUser";
+		Long chatRoomId = 3L;
+
+		ChatRoom anonymousChatRoom = ChatRoomFixture.chatRoom(chatRoomId, null);
+		given(chatRoomRepository.save(any(ChatRoom.class))).willReturn(anonymousChatRoom);
+
+		// when
+		ChatRoomCreateResponse result = chatRoomService.getOrCreateChatRoom(email);
+
+		// then
+		assertThat(result.chatRoomId()).isEqualTo(chatRoomId);
+		assertThat(result.isAnonymous()).isTrue();
 		then(chatRoomRepository).should().save(any(ChatRoom.class));
 	}
 }
