@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class ChatBotMessageRepositoryTest extends DataMongoSupport {
 		List<Document> docs = new ArrayList<>();
 		for (int i = START_INDEX; i <= END_INDEX; i++) {
 			docs.add(new Document()
-				.append("_id", "room1-msg-" + i)
+				.append("_id", new ObjectId())
 				.append("chat_room_id", CHAT_ROOM_ID)
 				.append("content", i)
 				.append("owner", i % 2 == 0)
@@ -86,7 +87,7 @@ public class ChatBotMessageRepositoryTest extends DataMongoSupport {
 		List<Document> docs = new ArrayList<>();
 		for (int i = 1; i <= 5; i++) {
 			docs.add(new Document()
-				.append("_id", "room2-msg-" + i)
+				.append("_id", new ObjectId())
 				.append("chat_room_id", CHAT_ROOM_ID)
 				.append("content", i)
 				.append("owner", i % 2 == 0)
