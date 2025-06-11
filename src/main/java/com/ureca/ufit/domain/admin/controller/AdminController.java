@@ -40,21 +40,21 @@ public class AdminController {
     }
 
     // 요금제 지표 조회
-    @GetMapping("/api/admin/rateplans/metrics")
-    public ResponseEntity<RatePlanMetricsResponse> getRatePlanMetrics(){
-        ResponseEntity response = adminService.getRatePlanMetrics();
-        return ResponseEntity.ok();
-    }
+//    @GetMapping("/api/admin/rateplans/metrics")
+//    public ResponseEntity<RatePlanMetricsResponse> getRatePlanMetrics(){
+//        ResponseEntity response = adminService.getRatePlanMetrics();
+//        return ResponseEntity.ok();
+//    }
 
     // 챗봇 리뷰 조회
-    @GetMapping("/api/admin/chats/reviews")
-    public ResponseEntity<ChatBotReviewResponse> getChatBotReviewByCursor(
-        @RequestParam(name = "cursor", required = false) String cursor,
-        @RequestParam(name = "size", defaultValue = "10") int size,
-        @RequestParam(name = "type", required = false) String type
-    ) {
-        CursorPageResponse <ChatBotReviewResponse> response = adminService.getChatBotReview(cursor, size, type);
-        return ResponseEntity.ok(response);
-    }
+//    @GetMapping("/api/admin/chats/reviews")
+//    public ResponseEntity<ChatBotReviewResponse> getChatBotReviewByCursor(
+//        @RequestParam(name = "cursor", required = false) String cursor,
+//        @RequestParam(name = "size", defaultValue = "10") int size,
+//        @RequestParam(name = "type", required = false) String type
+//    ) {
+//        CursorPageResponse <ChatBotReviewResponse> response = adminService.getChatBotReview(cursor, size, type);
+//        return ResponseEntity.ok(response);
+//    }
 
 }
