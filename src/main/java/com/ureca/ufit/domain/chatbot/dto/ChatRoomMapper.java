@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class ChatRoomMapper {
 
 	public static ChatRoomCreateResponse toChatroomCreateResponse(ChatRoom chatRoom) {
-		return new ChatRoomCreateResponse(chatRoom.getId());
+		boolean isAnonymous = (chatRoom.getUser() == null);
+		return new ChatRoomCreateResponse(chatRoom.getId(), isAnonymous);
 	}
 }
