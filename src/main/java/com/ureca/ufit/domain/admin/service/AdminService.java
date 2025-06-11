@@ -1,11 +1,10 @@
 package com.ureca.ufit.domain.admin.service;
 
+import com.ureca.ufit.domain.admin.dto.ChatBotReviewMapper;
 import com.ureca.ufit.domain.admin.dto.RatePlanMapper;
 import com.ureca.ufit.domain.admin.dto.request.CreateRatePlanRequest;
-import com.ureca.ufit.domain.admin.dto.response.AdminRatePlanResponse;
-import com.ureca.ufit.domain.admin.dto.response.CreateRatePlanResponse;
-import com.ureca.ufit.domain.admin.dto.response.DeleteRatePlanResponse;
-import com.ureca.ufit.domain.admin.exception.RatePlanErrorCode;
+import com.ureca.ufit.domain.admin.dto.response.*;
+import com.ureca.ufit.domain.rateplan.exception.RatePlanErrorCode;
 import com.ureca.ufit.domain.rateplan.repository.RatePlanRepository;
 import com.ureca.ufit.entity.RatePlan;
 import com.ureca.ufit.global.dto.CursorPageResponse;
@@ -39,5 +38,12 @@ public class AdminService {
 		return RatePlanMapper.toDeleteRateResponse();
 	}
 
+	public RatePlanMetricsResponse getRatePlanMetrics() {
+		return RatePlanMapper.toRatePlanMetricsResponse();
+	}
+
+	public ChatBotReviewResponse getChatBotReview(){
+		return ChatBotReviewMapper.toChatBotReview();
+	}
 
 }
