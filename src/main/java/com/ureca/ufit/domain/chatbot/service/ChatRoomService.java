@@ -16,13 +16,19 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ChatRoomService {
 
+	private static final String ANONYMOUS_USER = "anonymousUser";
+
 	private final ChatRoomRepository chatRoomRepository;
 	private final UserRepository userRepository;
 
 	@Transactional
 	public ChatRoomCreateResponse getOrCreateChatRoom(String email) {
-		User findUser = userRepository.getByEmail(email);
+		if (ANONYMOUS_USER.equals(email)) {
+			ChatRoom newChatRoom = chatRoomRepository.save(ChatRoom.of(null));
+			return ChatRoomMapper.toChatroomCreateResponse(newChatRoom);
+		}
 
+		User findUser = userRepository.getByEmail(email);
 		return chatRoomRepository.findByUser(findUser)
 			.map(ChatRoomMapper::toChatroomCreateResponse)
 			.orElseGet(() -> {
