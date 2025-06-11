@@ -25,7 +25,7 @@ public class ChatRoom {
 	@GeneratedValue(strategy = IDENTITY)
 	private Long id;
 
-	@OneToOne(fetch = LAZY, optional = false)
+	@OneToOne(fetch = LAZY, optional = true)
 	@JoinColumn(name = "user_id", referencedColumnName = "user_id")
 	private User user;
 

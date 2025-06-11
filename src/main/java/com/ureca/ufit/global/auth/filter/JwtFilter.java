@@ -44,7 +44,8 @@ public class JwtFilter extends OncePerRequestFilter {
             "/api/chats/message",
             "/api/chats/messages/ai",
             "/api/chats/review",
-            "/api/chats"
+            "/api/chats",
+            "/api/chats/rooms"
     );
 
     private static final AntPathMatcher matcher = new AntPathMatcher();
