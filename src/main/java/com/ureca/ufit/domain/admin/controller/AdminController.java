@@ -47,14 +47,13 @@ public class AdminController {
 //    }
 
     // 챗봇 리뷰 조회
-//    @GetMapping("/api/admin/chats/reviews")
-//    public ResponseEntity<ChatBotReviewResponse> getChatBotReviewByCursor(
-//        @RequestParam(name = "cursor", required = false) String cursor,
-//        @RequestParam(name = "size", defaultValue = "10") int size,
-//        @RequestParam(name = "type", required = false) String type
-//    ) {
-//        CursorPageResponse <ChatBotReviewResponse> response = adminService.getChatBotReview(cursor, size, type);
-//        return ResponseEntity.ok(response);
-//    }
+    @GetMapping("/api/admin/chats/reviews")
+    public ResponseEntity<CursorPageResponse<ChatBotReviewResponse>> getChatBotReviewByCursor(
+        @RequestParam(name = "cursor", required = false) String cursor,
+        @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        CursorPageResponse <ChatBotReviewResponse> response = adminService.getChatBotReview(cursor, size);
+        return ResponseEntity.ok(response);
+    }
 
 }
