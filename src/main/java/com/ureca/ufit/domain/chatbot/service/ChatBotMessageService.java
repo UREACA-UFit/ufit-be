@@ -2,7 +2,6 @@ package com.ureca.ufit.domain.chatbot.service;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.ureca.ufit.domain.chatbot.dto.response.ChatMessageDto;
 import com.ureca.ufit.domain.chatbot.repository.ChatBotMessageRepository;

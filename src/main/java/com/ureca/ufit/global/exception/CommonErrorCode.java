@@ -19,8 +19,7 @@ public enum CommonErrorCode implements ErrorCode {
 	UNSUPPORTED_TOKEN(HttpStatus.UNAUTHORIZED, "Unsupported JWT token"),
 	ILLEGAL_TOKEN(HttpStatus.UNAUTHORIZED, "Illegal JWT token"),
 	REFRESH_DENIED(HttpStatus.FORBIDDEN, "Refresh denied"),
-	REFRESH_NOT_FOUND(HttpStatus.NOT_FOUND, "Refresh not found")
-	;
+	REFRESH_NOT_FOUND(HttpStatus.NOT_FOUND, "Refresh not found");
 
 	private final HttpStatus httpStatus;
 	private final String message;

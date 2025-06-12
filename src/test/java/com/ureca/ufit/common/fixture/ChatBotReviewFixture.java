@@ -3,7 +3,6 @@ package com.ureca.ufit.common.fixture;
 import com.ureca.ufit.entity.ChatBotReview;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 
 import static lombok.AccessLevel.PRIVATE;
@@ -32,4 +31,12 @@ public class ChatBotReviewFixture {
         return review;
     }
 
+	public static ChatBotReview chatBotReview(String content, String questionSummary) {
+		return ChatBotReview.of(
+			content,
+			1,
+			Map.of(),
+			questionSummary
+		);
+	}
 }
