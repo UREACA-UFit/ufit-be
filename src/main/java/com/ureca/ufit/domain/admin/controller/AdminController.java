@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ureca.ufit.domain.admin.dto.request.CreateRatePlanRequest;
 import com.ureca.ufit.domain.admin.dto.response.AdminRatePlanResponse;
+import com.ureca.ufit.domain.admin.dto.response.ChatBotReviewResponse;
 import com.ureca.ufit.domain.admin.dto.response.CreateRatePlanResponse;
 import com.ureca.ufit.domain.admin.dto.response.DeleteRatePlanResponse;
 import com.ureca.ufit.domain.admin.service.AdminService;
@@ -57,14 +58,13 @@ public class AdminController {
 	//    }
 
 	// 챗봇 리뷰 조회
-	//    @GetMapping("/api/admin/chats/reviews")
-	//    public ResponseEntity<ChatBotReviewResponse> getChatBotReviewByCursor(
-	//        @RequestParam(name = "cursor", required = false) String cursor,
-	//        @RequestParam(name = "size", defaultValue = "10") int size,
-	//        @RequestParam(name = "type", required = false) String type
-	//    ) {
-	//        CursorPageResponse <ChatBotReviewResponse> response = adminService.getChatBotReview(cursor, size, type);
-	//        return ResponseEntity.ok(response);
-	//    }
+	@GetMapping("/api/admin/chats/reviews")
+	public ResponseEntity<CursorPageResponse<ChatBotReviewResponse>> getChatBotReviewByCursor(
+		@RequestParam(name = "cursor", required = false) String cursor,
+		@RequestParam(name = "size", defaultValue = "10") int size
+	) {
+		CursorPageResponse<ChatBotReviewResponse> response = adminService.getChatBotReview(cursor, size);
+		return ResponseEntity.ok(response);
+	}
 
 }

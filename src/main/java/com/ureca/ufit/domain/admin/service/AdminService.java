@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import com.ureca.ufit.domain.admin.dto.RatePlanMapper;
 import com.ureca.ufit.domain.admin.dto.request.CreateRatePlanRequest;
 import com.ureca.ufit.domain.admin.dto.response.AdminRatePlanResponse;
+import com.ureca.ufit.domain.admin.dto.response.ChatBotReviewResponse;
 import com.ureca.ufit.domain.admin.dto.response.CreateRatePlanResponse;
 import com.ureca.ufit.domain.admin.dto.response.DeleteRatePlanResponse;
+import com.ureca.ufit.domain.chatbot.repository.ChatBotReviewRepository;
 import com.ureca.ufit.domain.rateplan.exception.RatePlanErrorCode;
 import com.ureca.ufit.domain.rateplan.repository.RatePlanRepository;
 import com.ureca.ufit.entity.RatePlan;
@@ -20,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminService {
 
 	private final RatePlanRepository ratePlanRepository;
+	private final ChatBotReviewRepository chatBotReviewRepository;
 
 	public CursorPageResponse<AdminRatePlanResponse> getRatePlansByCursor(String cursor, int size, String type) {
 		return ratePlanRepository.getRatePlansByCursor(cursor, size, type);
@@ -43,9 +46,9 @@ public class AdminService {
 	//	public RatePlanMetricsResponse getRatePlanMetrics() {
 	//		return RatePlanMapper.toRatePlanMetricsResponse();
 	//	}
-	//
-	//	public ChatBotReviewResponse getChatBotReview(){
-	//		return ChatBotReviewMapper.toChatBotReview();
-	//	}
+
+	public CursorPageResponse<ChatBotReviewResponse> getChatBotReview(String cursor, int size) {
+		return chatBotReviewRepository.getChatBotReviewByCursor(cursor, size);
+	}
 
 }
