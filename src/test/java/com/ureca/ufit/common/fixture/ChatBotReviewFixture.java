@@ -1,11 +1,12 @@
 package com.ureca.ufit.common.fixture;
 
-import com.ureca.ufit.entity.ChatBotReview;
-import lombok.NoArgsConstructor;
+import static lombok.AccessLevel.*;
 
 import java.util.Map;
 
-import static lombok.AccessLevel.PRIVATE;
+import com.ureca.ufit.entity.ChatBotReview;
+
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = PRIVATE)
 public class ChatBotReviewFixture {
@@ -17,8 +18,6 @@ public class ChatBotReviewFixture {
 			recommendPlan,
 			"넉넉한 데이터로 마음놓고 사용가능한 요금제");
 	}
-
-
 
 	public static ChatBotReview chatBotReview(String content, String questionSummary) {
 		return ChatBotReview.of(

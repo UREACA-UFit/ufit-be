@@ -1,18 +1,19 @@
 package com.ureca.ufit.entity;
 
-import com.ureca.ufit.global.domain.MongoTimeBaseEntity;
-import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import static lombok.AccessLevel.*;
+
+import java.util.Map;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.Map;
+import com.ureca.ufit.global.domain.MongoTimeBaseEntity;
 
-import static lombok.AccessLevel.PRIVATE;
-import static lombok.AccessLevel.PROTECTED;
+import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Document(collection = "chat_bot_review")
 @Getter
@@ -46,13 +47,14 @@ public class ChatBotReview extends MongoTimeBaseEntity {
 		this.questionSummary = questionSummary;
 	}
 
-	public static ChatBotReview of(String content, int rating, Map<String, Object> recommendPlan, String questionSummary){
+	public static ChatBotReview of(String content, int rating, Map<String, Object> recommendPlan,
+		String questionSummary) {
 		return ChatBotReview.builder()
-				.content(content)
-				.rating(rating)
-				.recommendPlan(recommendPlan)
-				.questionSummary(questionSummary)
-				.build();
+			.content(content)
+			.rating(rating)
+			.recommendPlan(recommendPlan)
+			.questionSummary(questionSummary)
+			.build();
 	}
 
 }
