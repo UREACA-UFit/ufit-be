@@ -46,7 +46,7 @@ public interface AdminControllerApiSpec {
 				name = "type",
 				description = "정렬·필터 타입",
 				in = ParameterIn.QUERY,
-				schema = @Schema(allowableValues = {"", "date", "price", "carrier"})
+				schema = @Schema(allowableValues = {"", "date", "lowestPrice", "highestPrice"})
 			)
 		}
 	)
