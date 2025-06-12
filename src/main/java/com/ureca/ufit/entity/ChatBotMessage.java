@@ -47,4 +47,15 @@ public class ChatBotMessage extends MongoTimeBaseEntity {
 		this.bPlanId = bPlanId;
 		this.chatRoomId = chatRoomId;
 	}
+
+	public static ChatBotMessage of(String content, boolean owner, Long aPlanId, Long bPlanId, Long chatRoomId) {
+		return ChatBotMessage.builder()
+			.content(content)
+			.owner(owner)
+			.aPlanId(aPlanId)
+			.bPlanId(bPlanId)
+			.chatRoomId(chatRoomId)
+			.build();
+	}
+
 }

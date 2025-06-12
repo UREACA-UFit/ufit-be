@@ -13,9 +13,12 @@ public record CreateChatBotReviewRequest(
 	@Positive
 	@Max(5)
 	Integer rating,
+
 	String content,
+
 	@NotEmpty
 	Map<String, Object> recommendPlans,
+
 	@NotNull
 	@Positive
 	Long chatRoomId
