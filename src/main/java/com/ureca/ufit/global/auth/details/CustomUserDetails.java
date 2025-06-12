@@ -10,9 +10,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.ureca.ufit.entity.enums.Role;
 
 public record CustomUserDetails(
-	String email,
-	String password,
-	Role role
+        long userId,
+        String email,
+        String password,
+        Role role
 
 ) implements UserDetails {
 

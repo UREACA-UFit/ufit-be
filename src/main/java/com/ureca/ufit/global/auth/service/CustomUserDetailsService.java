@@ -25,6 +25,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 			new RestApiException(UserErrorCode.USER_NOT_FOUND)
 		);
 
-		return new CustomUserDetails(user.getEmail(), user.getPassword(), user.getRole());
+		return new CustomUserDetails(user.getId(), user.getEmail(), user.getPassword(), user.getRole());
 	}
 }
