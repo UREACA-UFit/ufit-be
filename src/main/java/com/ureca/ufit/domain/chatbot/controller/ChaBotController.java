@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ureca.ufit.domain.chatbot.dto.request.CreateChatBotMessageRequest;
 import com.ureca.ufit.domain.chatbot.dto.request.CreateChatBotReviewRequest;
 import com.ureca.ufit.domain.chatbot.dto.response.ChatMessageDto;
 import com.ureca.ufit.domain.chatbot.dto.response.ChatRoomCreateResponse;
+import com.ureca.ufit.domain.chatbot.dto.response.CreateChatBotMessageResponse;
 import com.ureca.ufit.domain.chatbot.dto.response.CreateChatBotReviewResponse;
 import com.ureca.ufit.domain.chatbot.service.ChatBotMessageService;
 import com.ureca.ufit.domain.chatbot.service.ChatBotReviewService;
@@ -55,6 +57,14 @@ public class ChaBotController {
 	public ResponseEntity<CreateChatBotReviewResponse> createChatBotReview(
 		@RequestBody @Valid CreateChatBotReviewRequest request) {
 		CreateChatBotReviewResponse response = chatBotReviewService.createChatBotReview(request);
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+	}
+
+	@PostMapping("/message")
+	public ResponseEntity<CreateChatBotMessageResponse> createChatBotMessage(
+		@AuthenticationPrincipal Long userId,
+		@RequestBody @Valid CreateChatBotMessageRequest request) {
+		CreateChatBotMessageResponse response = chatBotMessageService.createChatBotMessage(request, userId);
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
