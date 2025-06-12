@@ -4,7 +4,10 @@ import org.springframework.stereotype.Service;
 
 import com.ureca.ufit.domain.admin.dto.RatePlanMapper;
 import com.ureca.ufit.domain.admin.dto.request.CreateRatePlanRequest;
-import com.ureca.ufit.domain.admin.dto.response.*;
+import com.ureca.ufit.domain.admin.dto.response.AdminRatePlanResponse;
+import com.ureca.ufit.domain.admin.dto.response.ChatBotReviewResponse;
+import com.ureca.ufit.domain.admin.dto.response.CreateRatePlanResponse;
+import com.ureca.ufit.domain.admin.dto.response.DeleteRatePlanResponse;
 import com.ureca.ufit.domain.chatbot.repository.ChatBotReviewRepository;
 import com.ureca.ufit.domain.rateplan.exception.RatePlanErrorCode;
 import com.ureca.ufit.domain.rateplan.repository.RatePlanRepository;
@@ -40,12 +43,12 @@ public class AdminService {
 		return RatePlanMapper.toDeleteRateResponse();
 	}
 
-//	public RatePlanMetricsResponse getRatePlanMetrics() {
-//		return RatePlanMapper.toRatePlanMetricsResponse();
-//	}
+	//	public RatePlanMetricsResponse getRatePlanMetrics() {
+	//		return RatePlanMapper.toRatePlanMetricsResponse();
+	//	}
 
-	public CursorPageResponse<ChatBotReviewResponse> getChatBotReview(String cursor, int size){
+	public CursorPageResponse<ChatBotReviewResponse> getChatBotReview(String cursor, int size) {
 		return chatBotReviewRepository.getChatBotReviewByCursor(cursor, size);
-  }
+	}
 
 }
