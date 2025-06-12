@@ -20,8 +20,7 @@ public class ChatBotReviewFixture {
 
     public static ChatBotReview chatBotReview(
             int rating,
-            Map<String, Object> recommendPlan,
-            LocalDateTime createdAt
+            Map<String, Object> recommendPlan   
     ) {
         ChatBotReview review = ChatBotReview.of(
                 "추천 퀄리티가 너무 좋아서…",
