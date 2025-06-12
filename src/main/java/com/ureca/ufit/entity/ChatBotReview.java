@@ -46,4 +46,14 @@ public class ChatBotReview extends MongoTimeBaseEntity {
 		this.recommendPlan = recommendPlan;
 		this.questionSummary = questionSummary;
 	}
+
+	public static ChatBotReview of(String content, int rating, Map<String, Object> recommendPlan,
+		String questionSummary) {
+		return ChatBotReview.builder()
+			.content(content)
+			.rating(rating)
+			.recommendPlan(recommendPlan)
+			.questionSummary(questionSummary)
+			.build();
+	}
 }
