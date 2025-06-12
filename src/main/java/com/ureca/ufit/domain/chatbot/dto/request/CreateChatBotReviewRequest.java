@@ -3,7 +3,6 @@ package com.ureca.ufit.domain.chatbot.dto.request;
 import java.util.Map;
 
 import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -11,7 +10,7 @@ import jakarta.validation.constraints.Positive;
 public record CreateChatBotReviewRequest(
 
 	@NotNull
-	@Min(0) // TODO: 1~5라면 @Postive로 변경
+	@Positive
 	@Max(5)
 	Integer rating,
 	String content,
