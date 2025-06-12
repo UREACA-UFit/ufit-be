@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 
 public record CustomUserDetails(
+        long userId,
         String email,
         String password,
         Role role
