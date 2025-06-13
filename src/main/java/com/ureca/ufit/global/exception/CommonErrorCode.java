@@ -19,7 +19,9 @@ public enum CommonErrorCode implements ErrorCode {
 	UNSUPPORTED_TOKEN(HttpStatus.UNAUTHORIZED, "Unsupported JWT token"),
 	ILLEGAL_TOKEN(HttpStatus.UNAUTHORIZED, "Illegal JWT token"),
 	REFRESH_DENIED(HttpStatus.FORBIDDEN, "Refresh denied"),
-	REFRESH_NOT_FOUND(HttpStatus.NOT_FOUND, "Refresh not found");
+	REFRESH_NOT_FOUND(HttpStatus.NOT_FOUND, "Refresh not found"),
+	RATEPLAN_NOT_FOUND(HttpStatus.NOT_FOUND, "The requested rate plan does not exist."),
+	RATEPLAN_DISABLED(HttpStatus.BAD_REQUEST, "The requested rate plan is not available.");
 
 	private final HttpStatus httpStatus;
 	private final String message;
