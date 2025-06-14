@@ -3,13 +3,21 @@ package com.ureca.ufit.domain.rateplan.repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
+import com.ureca.ufit.domain.rateplan.dto.response.RatePlanDetailResponse;
+import com.ureca.ufit.domain.rateplan.dto.response.RatePlanPreviewResponse;
+import com.ureca.ufit.entity.RatePlan;
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import com.ureca.ufit.domain.admin.dto.response.AdminRatePlanResponse;
@@ -27,6 +35,12 @@ public class RatePlanQueryRepositoryImpl implements RatePlanQueryRepository {
 	private static final String HIGHEST_PRICE = "highestPrice";
 	private static final String RATE_PLANS = "rate_plans";
 	private static final String MONTHLY_FEE = "monthly_fee";
+
+	private static final String IS_DELETED = "is_deleted";
+	private static final String IS_ENABLED = "is_enabled";
+	private static final String PRICE_DESC = "PRICE_DESC";
+	private static final String NAME_ASC = "NAME_ASC";
+	private static final String NAME_DESC = "NAME_DESC";
 
 	private final MongoTemplate mongoTemplate;
 
@@ -143,6 +157,77 @@ public class RatePlanQueryRepositoryImpl implements RatePlanQueryRepository {
 			return Sort.Order.desc(MONTHLY_FEE);
 		}
 		return Sort.Order.desc(CURSOR);
+	}
+
+	@Override
+	public Page<RatePlan> findEnabledRatePlansWithSort(Pageable pageable, String sortType) {
+		Criteria criteria = Criteria.where(IS_ENABLED).is(true)
+				.and(IS_DELETED).is(false);
+
+		Sort sort;
+		if (NAME_ASC.equalsIgnoreCase(sortType)) {
+			sort = Sort.by("planName").ascending();
+		} else if (NAME_DESC.equalsIgnoreCase(sortType)) {
+			sort = Sort.by("planName").descending();
+		} else if (PRICE_DESC.equalsIgnoreCase(sortType)) {
+			sort = Sort.by("monthlyFee").descending();
+		} else {
+			sort = Sort.by("monthlyFee").ascending();
+		}
+
+		Query query = new Query(criteria)
+				.with(sort)
+				.skip(pageable.getOffset())
+				.limit(pageable.getPageSize());
+
+		List<RatePlan> items = mongoTemplate.find(query, RatePlan.class);
+		long total = items.size();
+
+		return new PageImpl<>(items, pageable, total);
+	}
+
+	@Override
+	public Page<RatePlanPreviewResponse> getRatePlanPreviews(Pageable pageable, String sortType) {
+		Criteria criteria = Criteria.where(IS_ENABLED).is(true)
+				.and(IS_DELETED).is(false);
+
+		Sort sort;
+		if (NAME_ASC.equalsIgnoreCase(sortType)) {
+			sort = Sort.by("plan_name").ascending();
+		} else if (NAME_DESC.equalsIgnoreCase(sortType)) {
+			sort = Sort.by("plan_name").descending();
+		} else if (PRICE_DESC.equalsIgnoreCase(sortType)) {
+			sort = Sort.by("monthly_fee").descending();
+		} else {
+			sort = Sort.by("monthly_fee").ascending();
+		}
+
+		Query query = new Query(criteria)
+				.with(sort)
+				.skip(pageable.getOffset())
+				.limit(pageable.getPageSize());
+
+		List<RatePlanPreviewResponse> results = mongoTemplate.find(query, RatePlanPreviewResponse.class, RATE_PLANS);
+		long total = results.size();
+
+		return new PageImpl<>(results, pageable, total);
+	}
+
+	@Override
+	public Optional<RatePlanDetailResponse> getRatePlanDetailById(String id) {
+		Criteria criteria = Criteria.where("_id").is(id)
+				.and(IS_ENABLED).is(true)
+				.and(IS_DELETED).is(false);
+
+		Query query = new Query(criteria);
+
+		RatePlanDetailResponse result = mongoTemplate.findOne(
+				query,
+				RatePlanDetailResponse.class,
+				"rate_plans"
+		);
+
+		return Optional.ofNullable(result);
 	}
 
 }

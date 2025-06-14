@@ -29,15 +29,9 @@ public class ChatBotMessage extends MongoTimeBaseEntity {
 	@Field("owner")
 	private boolean owner;
 
-	@NotNull
-	@Field("userId")
-	private Long userId;
-
-	@NotNull
 	@Field("a_plan_id")
 	private Long aPlanId;
 
-	@NotNull
 	@Field("b_plan_id")
 	private Long bPlanId;
 
@@ -46,12 +40,22 @@ public class ChatBotMessage extends MongoTimeBaseEntity {
 	private Long chatRoomId;
 
 	@Builder(access = PRIVATE)
-	private ChatBotMessage(String content, boolean owner, Long userId, Long aPlanId, Long bPlanId, Long chatRoomId) {
+	private ChatBotMessage(String content, boolean owner, Long aPlanId, Long bPlanId, Long chatRoomId) {
 		this.content = content;
 		this.owner = owner;
-		this.userId = userId;
 		this.aPlanId = aPlanId;
 		this.bPlanId = bPlanId;
 		this.chatRoomId = chatRoomId;
 	}
+
+	public static ChatBotMessage of(String content, boolean owner, Long aPlanId, Long bPlanId, Long chatRoomId) {
+		return ChatBotMessage.builder()
+			.content(content)
+			.owner(owner)
+			.aPlanId(aPlanId)
+			.bPlanId(bPlanId)
+			.chatRoomId(chatRoomId)
+			.build();
+	}
+
 }

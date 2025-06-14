@@ -3,6 +3,7 @@ package com.ureca.ufit.domain.chatbot.repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -35,7 +36,7 @@ public class ChatBotMessageRepositoryImpl implements ChatBotMessageRepositoryCus
 
 		Criteria criteria = Criteria.where(FIELD_CHAT_ROOM_ID).is(chatRoom.getId());
 		if (lastMessageId != null && !lastMessageId.isBlank()) {
-			criteria = criteria.and(FIELD_ID).lt(lastMessageId);
+			criteria = criteria.and(FIELD_ID).lt(new ObjectId(lastMessageId));
 		}
 		MatchOperation match = Aggregation.match(criteria);
 		pipeline.add(match);

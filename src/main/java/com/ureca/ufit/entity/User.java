@@ -75,15 +75,17 @@ public class User extends TimeBaseEntity {
 		this.ratePlanId = ratePlanId;
 	}
 
-	public static User of(String email, String password, int age, int family, Gender gender, Role role, String ratePlanId){
+	public static User of(String email, String password, int age, int family, Gender gender, Role role,
+		String ratePlanId) {
+
 		return User.builder()
-				.email(email)
-				.password(password)
-				.age(age)
-				.family(family)
-				.gender(gender)
-				.role(role)
-				.ratePlanId(ratePlanId)
-				.build();
+			.email(email)
+			.password(password)
+			.age(age)
+			.family(family)
+			.gender(gender)
+			.role(role)
+			.ratePlanId(ratePlanId)
+			.build();
 	}
 }

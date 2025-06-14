@@ -4,7 +4,6 @@ import static jakarta.persistence.FetchType.*;
 import static jakarta.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -25,7 +24,7 @@ public class ChatRoom {
 	@GeneratedValue(strategy = IDENTITY)
 	private Long id;
 
-	@OneToOne(fetch = LAZY, optional = false)
+	@OneToOne(fetch = LAZY, optional = true)
 	@JoinColumn(name = "user_id", referencedColumnName = "user_id")
 	private User user;
 
@@ -34,7 +33,7 @@ public class ChatRoom {
 		this.user = user;
 	}
 
-	public static ChatRoom of(User user){
+	public static ChatRoom of(User user) {
 		return ChatRoom.builder()
 			.user(user)
 			.build();
