@@ -2,6 +2,7 @@ package com.ureca.ufit.global.profanity;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.ahocorasick.trie.Emit;
@@ -38,6 +39,18 @@ public class ProfanityFilter {
 		);
 	}
 
+	// 정제된 데이터 반환
+	public String normalize(String input, Set<BanwordFilterPolicy> policies) {
+		if (input == null || policies.isEmpty()) {
+			return input;
+		}
+		String result = input;
+		for (BanwordFilterPolicy p : policies) {
+			result = result.replaceAll(p.getRegex(), "");
+		}
+		return result;
+	}
+
 	public boolean containsBannedword(String text) {
 		Collection<Emit> emits = trie.parseText(text);
 		return !emits.isEmpty();
@@ -50,7 +63,16 @@ public class ProfanityFilter {
 		return attackPatterns.stream().anyMatch(p -> p.matcher(text).find());
 	}
 
-	public boolean isBanned(String text) {
-		return containsBannedword(text) || containsAttackPattern(text);
+	public boolean isBanned(String text, Set<BanwordFilterPolicy> policies) {
+		if (text == null)
+			return false;
+
+		if (containsAttackPattern(text))
+			return true;
+		if (containsBannedword(text))
+			return true;
+
+		String cleanedText = normalize(text, policies);
+		return containsBannedword(cleanedText);
 	}
 }

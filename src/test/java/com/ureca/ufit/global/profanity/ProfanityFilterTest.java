@@ -1,8 +1,10 @@
 package com.ureca.ufit.global.profanity;
 
+import static com.ureca.ufit.global.profanity.BanwordFilterPolicy.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -47,14 +49,32 @@ class ProfanityFilterTest {
 		assertThat(isXss).isTrue();
 	}
 
+	@DisplayName("우회 금칙어가 있는 문장이면 금칙어 필터링이 작동된다.")
+	@Test
+	void testBypassFilter() {
+		// given
+		String input = "바 보";
+		String input2 = "바1보";
+		Set<BanwordFilterPolicy> policies = Set.of(NUMBERS, WHITESPACES);
+
+		// when
+		boolean isWhitespaces = profanityFilter.isBanned(input, policies);
+		boolean isNumber = profanityFilter.isBanned(input2, policies);
+
+		// then
+		assertThat(isWhitespaces).isTrue();
+		assertThat(isNumber).isTrue();
+	}
+
 	@DisplayName("욕설과 해킹 시도가 없는 문장이면 금칙어 필터링이 작동하지 않는다.")
 	@Test
 	void testNoBanned() {
 		// given
 		String text = "안녕하세요. 좋은 하루 보내세요.";
+		Set<BanwordFilterPolicy> policies = Set.of(NUMBERS, WHITESPACES);
 
 		// when
-		boolean isBanned = profanityFilter.isBanned(text);
+		boolean isBanned = profanityFilter.isBanned(text, policies);
 
 		// then
 		assertThat(isBanned).isFalse();

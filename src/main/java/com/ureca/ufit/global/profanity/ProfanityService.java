@@ -2,6 +2,7 @@ package com.ureca.ufit.global.profanity;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ public class ProfanityService {
 		}
 	}
 
-	public boolean containsBannedWord(String text) {
-		return profanityFilter.isBanned(text);
+	public boolean containsBannedWord(String text, Set<BanwordFilterPolicy> policies) {
+		return profanityFilter.isBanned(text, policies);
 	}
 }
