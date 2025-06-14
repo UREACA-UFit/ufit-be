@@ -17,6 +17,7 @@ import com.ureca.ufit.domain.chatbot.dto.response.ChatMessageDto;
 import com.ureca.ufit.domain.chatbot.dto.response.ChatRoomCreateResponse;
 import com.ureca.ufit.domain.chatbot.dto.response.CreateChatBotMessageResponse;
 import com.ureca.ufit.domain.chatbot.dto.response.CreateChatBotReviewResponse;
+import com.ureca.ufit.global.auth.details.CustomUserDetails;
 import com.ureca.ufit.global.dto.CursorPageResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -81,7 +82,7 @@ public interface ChaBotControllerApiSpec {
 	@PostMapping("/rooms")
 	public ResponseEntity<ChatRoomCreateResponse> getOrCreateChatRoom(
 		@Parameter(hidden = true)
-		@AuthenticationPrincipal String email
+		@AuthenticationPrincipal CustomUserDetails userDetails
 	);
 
 	@Operation(
@@ -108,7 +109,7 @@ public interface ChaBotControllerApiSpec {
 	@PostMapping("/message")
 	public ResponseEntity<CreateChatBotMessageResponse> createChatBotMessage(
 		@Parameter(hidden = true)
-		@AuthenticationPrincipal Long userId,
+		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@RequestBody @Valid CreateChatBotMessageRequest request
 	);
 
