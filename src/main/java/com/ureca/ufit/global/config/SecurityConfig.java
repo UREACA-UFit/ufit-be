@@ -106,7 +106,7 @@ public class SecurityConfig {
 
 		configuration.setAllowedOrigins(
 			List.of(
-				"http://localhost:3000", "https://u-fit.site"
+				"http://localhost:3000", "https://u-fit.site", "https://be.u-fit.site"
 			));
 		configuration.setExposedHeaders(List.of("Authorization"));
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
