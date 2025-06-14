@@ -14,6 +14,7 @@ import com.ureca.ufit.domain.chatbot.dto.response.CreateChatBotReviewResponse;
 import com.ureca.ufit.domain.chatbot.service.ChatBotMessageService;
 import com.ureca.ufit.domain.chatbot.service.ChatBotReviewService;
 import com.ureca.ufit.domain.chatbot.service.ChatRoomService;
+import com.ureca.ufit.global.auth.details.CustomUserDetails;
 import com.ureca.ufit.global.dto.CursorPageResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -35,8 +36,8 @@ public class ChaBotController implements ChaBotControllerApiSpec {
 	}
 
 	@Override
-	public ResponseEntity<ChatRoomCreateResponse> getOrCreateChatRoom(String email) {
-		ChatRoomCreateResponse response = chatRoomService.getOrCreateChatRoom(email);
+	public ResponseEntity<ChatRoomCreateResponse> getOrCreateChatRoom(CustomUserDetails userDetails) {
+		ChatRoomCreateResponse response = chatRoomService.getOrCreateChatRoom(userDetails.email());
 		return ResponseEntity.ok(response);
 	}
 
@@ -47,9 +48,9 @@ public class ChaBotController implements ChaBotControllerApiSpec {
 	}
 
 	@Override
-	public ResponseEntity<CreateChatBotMessageResponse> createChatBotMessage(Long userId,
+	public ResponseEntity<CreateChatBotMessageResponse> createChatBotMessage(CustomUserDetails userDetails,
 		CreateChatBotMessageRequest request) {
-		CreateChatBotMessageResponse response = chatBotMessageService.createChatBotMessage(request, userId);
+		CreateChatBotMessageResponse response = chatBotMessageService.createChatBotMessage(request, userDetails.userId());
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
