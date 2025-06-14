@@ -20,6 +20,8 @@ import com.ureca.ufit.domain.chatbot.service.ChatRoomService;
 import com.ureca.ufit.domain.user.repository.UserRepository;
 import com.ureca.ufit.entity.ChatRoom;
 import com.ureca.ufit.entity.User;
+import com.ureca.ufit.entity.enums.Role;
+import com.ureca.ufit.global.auth.details.CustomUserDetails;
 
 @ExtendWith(MockitoExtension.class)
 public class ChatRoomServiceTest {
@@ -47,7 +49,8 @@ public class ChatRoomServiceTest {
 		given(chatRoomRepository.findByUser(user)).willReturn(Optional.of(existingChatRoom));
 
 		// when
-		ChatRoomCreateResponse result = chatRoomService.getOrCreateChatRoom(email);
+		ChatRoomCreateResponse result = chatRoomService.getOrCreateChatRoom(
+			new CustomUserDetails(1L, email, "pass", Role.USER));
 
 		// then
 		assertThat(result.chatRoomId()).isEqualTo(chatRoomId);
@@ -70,7 +73,8 @@ public class ChatRoomServiceTest {
 		given(chatRoomRepository.save(any(ChatRoom.class))).willReturn(newChatRoom);
 
 		// when
-		ChatRoomCreateResponse result = chatRoomService.getOrCreateChatRoom(email);
+		ChatRoomCreateResponse result = chatRoomService.getOrCreateChatRoom(
+			new CustomUserDetails(1L, email, "pass", Role.USER));
 
 		// then
 		assertThat(result.chatRoomId()).isEqualTo(chatRoomId);
@@ -82,14 +86,13 @@ public class ChatRoomServiceTest {
 	@DisplayName("비회원 사용자인 경우 새 채팅방을 생성하고 isAnonymous가 true인 응답을 반환한다")
 	public void getOrCreateChatRoom_AnonymousUser() {
 		// given
-		String email = "anonymousUser";
 		Long chatRoomId = 3L;
 
 		ChatRoom anonymousChatRoom = ChatRoomFixture.chatRoom(chatRoomId, null);
 		given(chatRoomRepository.save(any(ChatRoom.class))).willReturn(anonymousChatRoom);
 
 		// when
-		ChatRoomCreateResponse result = chatRoomService.getOrCreateChatRoom(email);
+		ChatRoomCreateResponse result = chatRoomService.getOrCreateChatRoom(null);
 
 		// then
 		assertThat(result.chatRoomId()).isEqualTo(chatRoomId);

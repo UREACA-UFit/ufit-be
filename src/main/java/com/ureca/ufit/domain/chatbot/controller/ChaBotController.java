@@ -37,7 +37,7 @@ public class ChaBotController implements ChaBotControllerApiSpec {
 
 	@Override
 	public ResponseEntity<ChatRoomCreateResponse> getOrCreateChatRoom(CustomUserDetails userDetails) {
-		ChatRoomCreateResponse response = chatRoomService.getOrCreateChatRoom(userDetails.email());
+		ChatRoomCreateResponse response = chatRoomService.getOrCreateChatRoom(userDetails);
 		return ResponseEntity.ok(response);
 	}
 
@@ -50,7 +50,8 @@ public class ChaBotController implements ChaBotControllerApiSpec {
 	@Override
 	public ResponseEntity<CreateChatBotMessageResponse> createChatBotMessage(CustomUserDetails userDetails,
 		CreateChatBotMessageRequest request) {
-		CreateChatBotMessageResponse response = chatBotMessageService.createChatBotMessage(request, userDetails.userId());
+		CreateChatBotMessageResponse response = chatBotMessageService.createChatBotMessage(request,
+			userDetails.userId());
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
