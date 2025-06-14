@@ -154,8 +154,9 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/ufit:latest
             docker stop ufit_server || true
             docker rm ufit_server || true
-            docker run -d --name ufit_server -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/ufit:latest
-
+            docker-compose pull
+            docker-compose up -d --force-recreate
+            
       - name: Slack Notify (Success)
         if: success()
         uses: 8398a7/action-slack@v3
