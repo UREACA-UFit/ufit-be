@@ -9,6 +9,7 @@ import com.ureca.ufit.domain.chatbot.repository.ChatRoomRepository;
 import com.ureca.ufit.domain.user.repository.UserRepository;
 import com.ureca.ufit.entity.ChatRoom;
 import com.ureca.ufit.entity.User;
+import com.ureca.ufit.global.auth.details.CustomUserDetails;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,19 +17,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ChatRoomService {
 
-	private static final String ANONYMOUS_USER = "anonymousUser";
-
 	private final ChatRoomRepository chatRoomRepository;
 	private final UserRepository userRepository;
 
 	@Transactional
-	public ChatRoomCreateResponse getOrCreateChatRoom(String email) {
-		if (ANONYMOUS_USER.equals(email)) {
+	public ChatRoomCreateResponse getOrCreateChatRoom(CustomUserDetails userDetails) {
+		if (userDetails == null) {
 			ChatRoom newChatRoom = chatRoomRepository.save(ChatRoom.of(null));
 			return ChatRoomMapper.toChatroomCreateResponse(newChatRoom);
 		}
 
-		User findUser = userRepository.getByEmail(email);
+		User findUser = userRepository.getByEmail(userDetails.email());
 		return chatRoomRepository.findByUser(findUser)
 			.map(ChatRoomMapper::toChatroomCreateResponse)
 			.orElseGet(() -> {
