@@ -1,5 +1,6 @@
 package com.ureca.ufit.domain.admin.service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -57,8 +58,7 @@ public class AdminService {
 	public RatePlanMetricsResponse getRatePlanMetrics(int page, int size) {
 		Pageable pageable = PageRequest.of(page - 1, size);
 		Page<RatePlan> pageResult = ratePlanRepository.findEnabledRatePlansWithSort(pageable, "NAME_ASC");
-
-		List<RatePlan> items = pageResult.getContent();
+		List<RatePlan> items = new ArrayList<>(pageResult.getContent());
 		long totalCount = pageResult.getTotalElements();
 
 		Map<String, Long> subscriberMap = userRepository.countUsersByRatePlan().stream()
@@ -68,8 +68,9 @@ public class AdminService {
 			));
 
 		items.sort(Comparator.comparingLong(
-			(RatePlan plan) -> subscriberMap.getOrDefault(plan.getId(), 0L)
+			plan -> subscriberMap.getOrDefault(plan.getClass(), 0L)
 		).reversed());
+
 
 
 		return RatePlanMapper.toRatePlanMetricsResponse(items, subscriberMap, page, size, totalCount);
