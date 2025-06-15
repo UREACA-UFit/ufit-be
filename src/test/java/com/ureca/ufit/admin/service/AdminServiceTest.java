@@ -41,6 +41,7 @@ public class AdminServiceTest extends TestContainerSupport {
 
 	@BeforeEach
 	void setup() {
+		mongoTemplate.dropCollection(RatePlan.class);
 		List<RatePlan> savedPlans = IntStream.rangeClosed(1, 10)
 			.mapToObj(i -> RatePlanFixture.ratePlan("요금제" + i, 10000 + i * 1000))
 			.map(mongoTemplate::save)
