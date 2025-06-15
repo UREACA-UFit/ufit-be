@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,10 +17,12 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 
 import com.ureca.ufit.common.fixture.RatePlanFixture;
 import com.ureca.ufit.common.fixture.UserFixture;
+import com.ureca.ufit.common.support.DataMongoSupport;
 import com.ureca.ufit.common.support.TestContainerSupport;
 import com.ureca.ufit.domain.admin.dto.response.RatePlanMetricsItem;
 import com.ureca.ufit.domain.admin.dto.response.RatePlanMetricsResponse;
 import com.ureca.ufit.domain.admin.service.AdminService;
+import com.ureca.ufit.domain.rateplan.repository.RatePlanRepository;
 import com.ureca.ufit.domain.user.repository.UserRepository;
 import com.ureca.ufit.entity.RatePlan;
 import com.ureca.ufit.entity.User;
@@ -37,7 +40,15 @@ public class AdminServiceTest extends TestContainerSupport {
 	private UserRepository userRepository;
 
 	@Autowired
+	private RatePlanRepository ratePlanRepository;
+
+	@Autowired
 	private AdminService adminService;
+
+	@AfterEach
+	void tearDown() {
+		ratePlanRepository.deleteAll();
+	}
 
 	@BeforeEach
 	void setup() {
